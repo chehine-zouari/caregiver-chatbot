@@ -1,4 +1,19 @@
 # app.py
+
+class CaregiverChatbot:
+    def process_message(self, message):
+        message = message.lower()
+        if "overwhelmed" in message or "tired" in message or "stress" in message:
+            return "I'm really sorry you're feeling this way. Taking care of someone is incredibly challenging, and it's okay to feel overwhelmed."
+        elif "medication" in message or "pill" in message:
+            return "Let's talk about the medication. Do you have questions about dosage or timing?"
+        elif "appointment" in message or "reminder" in message:
+            return "Sure! Would you like me to help you set up an appointment reminder?"
+        elif "lonely" in message:
+            return "You're not alone. I'm here with you. Would talking to someone help right now?"
+        else:
+            return "You're doing great. How else can I support you today?"
+            
 import streamlit as st
 from caregiver_chatbot import CaregiverChatbot
 
