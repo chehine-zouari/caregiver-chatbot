@@ -1,6 +1,6 @@
 import streamlit as st
 from PIL import Image
-from caregiver_chatbot import CaregiverChatbot
+
 import pandas as pd
 import matplotlib.pyplot as plt
 
