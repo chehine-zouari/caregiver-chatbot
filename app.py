@@ -22,7 +22,7 @@ with col1:
     if logo:
         st.image(logo, width=100)  # Display logo again in the layout
 with col2:
-    st.markdown("## 🧠 Digital Care Companion")
+    st.markdown("## 🤖 Digital Care Companion 🤖")
     st.markdown("**Empowering caregivers of children with medical complexity through AI.**")
 
 # Allow the user to choose the tone before starting the conversation
