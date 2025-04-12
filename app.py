@@ -1,18 +1,34 @@
 # app.py
 
-class CaregiverChatbot:
-    def process_message(self, message):
-        message = message.lower()
-        if "overwhelmed" in message or "tired" in message or "stress" in message:
-            return "I'm really sorry you're feeling this way. Taking care of someone is incredibly challenging, and it's okay to feel overwhelmed."
-        elif "medication" in message or "pill" in message:
-            return "Let's talk about the medication. Do you have questions about dosage or timing?"
-        elif "appointment" in message or "reminder" in message:
-            return "Sure! Would you like me to help you set up an appointment reminder?"
-        elif "lonely" in message:
-            return "You're not alone. I'm here with you. Would talking to someone help right now?"
-        else:
-            return "You're doing great. How else can I support you today?"
+def process_message(self, message):
+    message = message.lower()
+    
+    if "overwhelmed" in message or "tired" in message or "stress" in message:
+        return "😔 Hmm... that sounds really tough. Caregiving can be so exhausting sometimes. You're doing your best, and that's more than enough. I'm here for you 💛"
+    
+    elif "medication" in message or "pill" in message:
+        return "💊 Got it. Medication can be tricky, right? Do you need help keeping track of doses or timing? I'm here to help you sort it out 👍"
+    
+    elif "appointment" in message or "reminder" in message:
+        return "📅 Of course! I can help with that. Would you like me to set up a gentle reminder for upcoming appointments? 😊"
+    
+    elif "lonely" in message:
+        return "💙 Ouch... loneliness is hard. Just know you’re not alone right now. I'm right here with you. Want to talk a little more? 🫂"
+
+    elif "angry" in message or "frustrated" in message:
+        return "😤 Ugh, I get that. It’s completely okay to feel frustrated. Want to vent a bit? I’m here to listen."
+
+    elif "sad" in message or "cry" in message:
+        return "😭 I’m so sorry you’re feeling this way. It’s okay to cry—it means you care deeply. Sending you a big virtual hug 🤗"
+
+    elif "thank" in message:
+        return "😊 Aww, you're very welcome! I'm really glad I could help 💖"
+
+    elif "help" in message:
+        return "🤝 Sure thing! Just tell me what you need and I’ll do my best to be useful."
+
+    else:
+        return "🫶 You're doing great, seriously. Being a caregiver isn’t easy. How else can I support you today?"
             
 import streamlit as st
 from caregiver_chatbot import CaregiverChatbot
