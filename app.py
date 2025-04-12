@@ -2,9 +2,15 @@ import streamlit as st
 from PIL import Image
 from caregiver_chatbot import CaregiverChatbot
 
-# Branding and Page Configuration
-logo = Image.open("your_logo.png")  # Make sure your logo image is in the same folder as your app
-st.set_page_config(page_title="Digital Care Companion", page_icon="🧠")
+# Load the logo image
+try:
+    logo = Image.open("logo.png")  # Ensure the logo file is in the same folder as your app.py
+except FileNotFoundError:
+    st.error("Logo image not found. Please ensure 'your_logo.png' is in the same directory.")
+    logo = None  # This prevents further errors if the image is missing
+
+if logo:
+    st.image(logo, width=100)
 
 # Layout for Logo and Title
 col1, col2 = st.columns([1, 5])
