@@ -2,9 +2,14 @@ from textblob import TextBlob
 from datetime import datetime
 
 class CaregiverChatbot:
-    def __init__(self):
-        self.conversation_history = []
-        self.sentiment_scores = []
+   def __init__(self, tone="soft"):
+    self.tone = tone  # 'soft' or 'directive'
+    self.conversation_history = []
+    self.sentiment_scores = []
+def set_tone(self, tone):
+    if tone in ["soft", "directive"]:
+        self.tone = tone
+
 
     def analyze_sentiment(self, text):
         blob = TextBlob(text)
@@ -70,14 +75,20 @@ class CaregiverChatbot:
         return "How can I assist you with medical care today?"
 
     def generate_emotional_support(self, sentiment):
+    if self.tone == "soft":
         if sentiment['score'] < -0.5:
-            return ("I hear you're having a tough time. "
-                    "Want to talk or would you prefer practical help?")
+            return "😔 Hmm... that sounds really tough. Caregiving can be so exhausting sometimes. You're doing your best, and that's more than enough. I'm here for you 💛"
         elif sentiment['score'] < 0:
-            return ("I understand this is challenging. "
-                    "Remember to take breaks and care for yourself too.")
+            return "💛 I get it, this isn’t easy. Don’t forget to take a break when you can. You’re not alone 🫂"
         else:
-            return "You're doing great. How else can I support you today?"
+            return "🌟 You’re doing an amazing job, really. Is there anything else you want to share today?"
+    elif self.tone == "directive":
+        if sentiment['score'] < -0.5:
+            return "💡 Let's pause and prioritize. What are the top 3 things stressing you out right now? We can handle them one step at a time."
+        elif sentiment['score'] < 0:
+            return "📝 Consider taking 5 minutes to list your challenges — it helps clarify what’s in your control. Want to try that?"
+        else:
+            return "✔️ You’re making great progress. Ready to tackle the next thing together?"
 
     def generate_general_response(self):
         return ("I'm here to help! Would you like assistance with:\n"
