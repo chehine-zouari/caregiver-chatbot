@@ -2,6 +2,5 @@ streamlit
 textblob
 matplotlib
 pandas
-streamlit-audio-recorder==0.1.1
 speechrecognition
-Pillow
+streamlit-audio-recorder
