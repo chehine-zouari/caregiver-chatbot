@@ -81,3 +81,28 @@ if st.sidebar.checkbox("📈 Show Mood Evolution Dashboard"):
 # Display the chat history
 for speaker, message in st.session_state.chat_history:
     st.markdown(f"**{speaker}:** {message}")
+
+
+# Care Tasks Tracker in Sidebar
+st.sidebar.markdown("## 🩺 Care Tasks Tracker")
+
+if "tasks" not in st.session_state:
+    st.session_state.tasks = []
+
+task_type = st.sidebar.selectbox("Task Type", ["Medication", "Doctor Appointment", "Feeding", "Nap", "Other"])
+task_name = st.sidebar.text_input("Task Description")
+task_date = st.sidebar.date_input("Select Date")
+task_time = st.sidebar.time_input("Select Time")
+
+if st.sidebar.button("➕ Add Task"):
+    if task_name:
+        task = {
+            "type": task_type,
+            "name": task_name,
+            "date": task_date.strftime("%Y-%m-%d"),
+            "time": task_time.strftime("%H:%M")
+        }
+        st.session_state.tasks.append(task)
+        st.sidebar.success("✅ Task added successfully!")
+    else:
+        st.sidebar.warning("Please enter a task description.")
