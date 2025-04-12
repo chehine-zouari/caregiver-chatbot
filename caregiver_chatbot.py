@@ -33,7 +33,7 @@ class CaregiverChatbot:
             elif "help" in message:
                 return "🤝 Sure thing! Just tell me what you need and I’ll do my best to be useful."
             elif "task" in message or "what are my care tasks" in message or "show tasks" in message:
-                return "📋 Here are your scheduled care tasks. Please check the section below.
+                return "📋 Here are your scheduled care tasks. Please check the section below."
             else:
                 return "🫶 You're doing great, seriously. Being a caregiver isn’t easy. How else can I support you today?"
 
