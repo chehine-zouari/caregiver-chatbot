@@ -6,6 +6,12 @@ class CaregiverChatbot:
         if tone in ["soft", "directive"]:
             self.tone = tone
 
+    def analyze_sentiment(self, message):
+        """Analyze the sentiment of the given message."""
+        blob = TextBlob(message)  # Create a TextBlob object for sentiment analysis
+        sentiment_score = blob.sentiment.polarity  # Get sentiment polarity (-1 to 1)
+        return {"score": sentiment_score}
+
     def process_message(self, message):
         message = message.lower()
 
