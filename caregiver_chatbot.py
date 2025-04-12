@@ -7,10 +7,15 @@ class CaregiverChatbot:
             self.tone = tone
 
     def analyze_sentiment(self, message):
-        """Analyze the sentiment of the given message."""
-        blob = TextBlob(message)  # Create a TextBlob object for sentiment analysis
-        sentiment_score = blob.sentiment.polarity  # Get sentiment polarity (-1 to 1)
-        return {"score": sentiment_score}
+    # Check if the message is valid (not None or empty)
+    if not message or not isinstance(message, str):
+        return {"score": 0}  # Return a neutral sentiment score if message is empty or invalid
+    
+    # Use TextBlob to perform sentiment analysis
+    from textblob import TextBlob
+    blob = TextBlob(message)
+    sentiment_score = blob.sentiment.polarity
+    return {"score": sentiment_score}
 
     def process_message(self, message):
         message = message.lower()
