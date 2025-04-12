@@ -49,4 +49,37 @@ with st.expander("🔧 Quick Support Topics"):
             st.session_state.messages.append(("bot", response))
             st.experimental_rerun()
 
+from streamlit_audio_recorder import audio_recorder
+import speech_recognition as sr
+import tempfile
+
+st.subheader("🎙️ Or talk to me:")
+
+audio_bytes = audio_recorder()
+if audio_bytes:
+    recognizer = sr.Recognizer()
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as f:
+        f.write(audio_bytes)
+        with sr.AudioFile(f.name) as source:
+            audio = recognizer.record(source)
+            try:
+                text = recognizer.recognize_google(audio)
+                st.success(f"Recognized: {text}")
+                user_input = text  # Set this as the input to the chatbot
+            except sr.UnknownValueError:
+                st.warning("Could not understand the audio.")
+
+import time
+
+def typewriter_effect(text, delay=0.03):
+    response = ""
+    for char in text:
+        response += char
+        st.markdown(f"**Bot:** {response}▌", unsafe_allow_html=True)
+        time.sleep(delay)
+        st.empty()  # Forces re-render
+    st.markdown(f"**Bot:** {response}", unsafe_allow_html=True)
+bot_response = chatbot.process_message(user_input)
+st.session_state.messages.append(("bot", bot_response))
+typewriter_effect(bot_response)  # Use this instead of a simple print
 
