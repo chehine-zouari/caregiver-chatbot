@@ -1,6 +1,8 @@
 import streamlit as st
 from PIL import Image
 from caregiver_chatbot import CaregiverChatbot
+import pandas as pd
+import matplotlib.pyplot as plt
 
 # Set page configuration (Title and Icon)
 st.set_page_config(page_title="Caregiver AI Support", page_icon="🤖")
@@ -59,6 +61,22 @@ if st.button("📅 Appointment reminder"):
     response = chatbot.process_message("Help me manage appointments")
     st.session_state.chat_history.append(("You", "Help me manage appointments"))
     st.session_state.chat_history.append(("Bot", response))
+
+# Helper: convert sentiment scores to DataFrame
+def get_mood_df(history):
+    timestamps = [entry[1] for entry in history]  # User message timestamp
+    scores = [chatbot.analyze_sentiment(entry[1])['score'] for entry in history if entry[0] == 'You']  # Get sentiment scores
+    return pd.DataFrame({'Time': timestamps, 'Mood Score': scores})
+
+# Mood Evolution Dashboard
+if st.sidebar.checkbox("📈 Show Mood Evolution Dashboard"):
+    df = get_mood_df(st.session_state.chat_history)
+    if not df.empty:
+        st.subheader("Caregiver Mood Evolution Over Time")
+        st.line_chart(df.rename(columns={"Time": "index"}).set_index("index"))
+        st.caption("This chart shows how the caregiver's emotional tone has changed over time based on their messages.")
+    else:
+        st.write("No conversation history to show mood evolution.")
 
 # Display the chat history
 for speaker, message in st.session_state.chat_history:
