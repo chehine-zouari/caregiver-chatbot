@@ -1,6 +1,6 @@
 import streamlit as st
 from PIL import Image
-
+from caregiver_chatbot import CaregiverChatbot
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -69,7 +69,7 @@ def get_mood_df(history):
     return pd.DataFrame({'Time': timestamps, 'Mood Score': scores})
 
 # Mood Evolution Dashboard
-if st.sidebar.checkbox("📈 Mood Evolution Dashboard"):
+if st.sidebar.checkbox("📈 Show Mood Evolution Dashboard"):
     df = get_mood_df(st.session_state.chat_history)
     if not df.empty:
         st.subheader("Caregiver Mood Evolution Over Time")
