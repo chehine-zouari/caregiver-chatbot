@@ -37,5 +37,3 @@ if st.button("📅 Appointment reminder"):
 
 for speaker, message in st.session_state.chat_history:
     st.markdown(f"**{speaker}:** {message}")
-
-
