@@ -106,3 +106,15 @@ if st.sidebar.button("➕ Add Task"):
         st.sidebar.success("✅ Task added successfully!")
     else:
         st.sidebar.warning("Please enter a task description.")
+
+for speaker, message in st.session_state.chat_history:
+    st.markdown(f"**{speaker}:** {message}")
+
+# Show care tasks if mentioned
+if st.checkbox("📋 Show Care Tasks"):
+    st.subheader("Scheduled Care Tasks")
+    if st.session_state.tasks:
+        for i, task in enumerate(st.session_state.tasks):
+            st.markdown(f"**{task['type']}** — {task['name']} at {task['time']} on {task['date']}")
+    else:
+        st.info("No tasks scheduled yet. Use the sidebar to add care activities.")
