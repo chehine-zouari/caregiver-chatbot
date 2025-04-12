@@ -1,85 +1,78 @@
-# app.py
+
 import streamlit as st
-from caregiver_chatbot import CaregiverChatbot
+from textblob import TextBlob
+from datetime import datetime
+import matplotlib.pyplot as plt
+import pandas as pd
+import random
 
-st.set_page_config(page_title="Caregiver Support Chat", page_icon="💬")
+class CaregiverChatbot:
+    def __init__(self):
+        self.conversation_history = []
+        self.sentiment_scores = []
+        self.user_profile = {}
+        
+    def analyze_sentiment(self, text):
+        # Basic sentiment analysis with TextBlob
+        blob = TextBlob(text)
+        score = blob.sentiment.polarity
+        if score < -0.5:
+            urgency = 'high'
+            emotions = ['overwhelmed', 'distressed']
+        elif score < 0:
+            urgency = 'medium'
+            emotions = ['concerned', 'anxious']
+        else:
+            urgency = 'low'
+            emotions = ['hopeful', 'positive']
+        return {'score': score, 'emotions': emotions, 'urgency': urgency}
 
-# Initialize chatbot and session state
-if "chatbot" not in st.session_state:
-    st.session_state.chatbot = CaregiverChatbot()
-if "messages" not in st.session_state:
-    st.session_state.messages = []
+    def save_interaction(self, user_input, response):
+        interaction = {
+            'timestamp': datetime.now().isoformat(),
+            'user_input': user_input,
+            'response': response,
+            'sentiment': self.analyze_sentiment(user_input)
+        }
+        self.conversation_history.append(interaction)
 
-st.title("🤖💬 Caregiver Support Chatbot")
+    def get_feedback(self):
+        return "How helpful was my response? Your feedback helps me provide better support."
 
-# Display chat history
-for sender, message in st.session_state.messages:
-    if sender == "user":
-        st.markdown(f"<div style='text-align: right; background-color: #e0f7fa; padding: 10px; border-radius: 10px; margin: 5px 0;'><strong>You:</strong> {message}</div>", unsafe_allow_html=True)
-    else:
-        st.markdown(f"<div style='text-align: left; background-color: #f1f8e9; padding: 10px; border-radius: 10px; margin: 5px 0;'><strong>Bot:</strong> {message}</div>", unsafe_allow_html=True)
+    def process_message(self, user_input):
+        sentiment = self.analyze_sentiment(user_input)
+        self.sentiment_scores.append(sentiment['score'])
 
-# Text input with ENTER send
-user_input = st.text_input("Type your message and press Enter...", key="input")
-if user_input:
-    st.session_state.messages.append(("user", user_input))
-    bot_response = st.session_state.chatbot.process_message(user_input)
-    st.session_state.messages.append(("bot", bot_response))
-    st.experimental_rerun()
+        if "emotion" in user_input.lower():
+            return "I understand this can be challenging. Please take a deep breath. You're doing great!"
+        
+        if "medication" in user_input.lower():
+            return "Would you like me to help you manage the medication schedule?"
+        
+        return "I'm here to help! How can I assist you today?"
 
-# Optional Quick Buttons
-with st.expander("🔧 Quick Support Topics"):
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        if st.button("💖 Emotional support"):
-            st.session_state.messages.append(("user", "I feel overwhelmed"))
-            response = st.session_state.chatbot.process_message("I feel overwhelmed")
-            st.session_state.messages.append(("bot", response))
-            st.experimental_rerun()
-    with col2:
-        if st.button("💊 Medication"):
-            st.session_state.messages.append(("user", "I need help with medication"))
-            response = st.session_state.chatbot.process_message("I need help with medication")
-            st.session_state.messages.append(("bot", response))
-            st.experimental_rerun()
-    with col3:
-        if st.button("📅 Appointment"):
-            st.session_state.messages.append(("user", "Help me manage appointments"))
-            response = st.session_state.chatbot.process_message("Help me manage appointments")
-            st.session_state.messages.append(("bot", response))
-            st.experimental_rerun()
+# Dashboard and caregiver mood tracking
+def plot_mood_trend(sentiment_scores):
+    df = pd.DataFrame(sentiment_scores, columns=['Score'])
+    df['Time'] = pd.to_datetime(df.index, unit='s')
+    st.line_chart(df.set_index('Time'))
 
-from streamlit_audio_recorder import audio_recorder
-import speech_recognition as sr
-import tempfile
+# Initialize chatbot
+chatbot = CaregiverChatbot()
 
-st.subheader("🎙️ Or talk to me:")
+# Streamlit UI components
+st.title("Caregiver Chatbot")
+st.subheader("Welcome! How can I assist you today?")
+input_text = st.text_input("Enter your message:")
 
-audio_bytes = audio_recorder()
-if audio_bytes:
-    recognizer = sr.Recognizer()
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as f:
-        f.write(audio_bytes)
-        with sr.AudioFile(f.name) as source:
-            audio = recognizer.record(source)
-            try:
-                text = recognizer.recognize_google(audio)
-                st.success(f"Recognized: {text}")
-                user_input = text  # Set this as the input to the chatbot
-            except sr.UnknownValueError:
-                st.warning("Could not understand the audio.")
+if input_text:
+    response = chatbot.process_message(input_text)
+    st.write(f"Bot: {response}")
+    chatbot.save_interaction(input_text, response)
 
-import time
+    # Plot mood trend
+    plot_mood_trend(chatbot.sentiment_scores)
 
-def typewriter_effect(text, delay=0.03):
-    response = ""
-    for char in text:
-        response += char
-        st.markdown(f"**Bot:** {response}▌", unsafe_allow_html=True)
-        time.sleep(delay)
-        st.empty()  # Forces re-render
-    st.markdown(f"**Bot:** {response}", unsafe_allow_html=True)
-bot_response = chatbot.process_message(user_input)
-st.session_state.messages.append(("bot", bot_response))
-typewriter_effect(bot_response)  # Use this instead of a simple print
-
+# Display conversation history (Optional feature)
+if st.checkbox("Show conversation history"):
+    st.write(chatbot.conversation_history)
