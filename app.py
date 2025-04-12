@@ -12,10 +12,6 @@ except FileNotFoundError:
     st.error("Logo image not found. Please ensure 'Logo.jpg' is in the same directory.")
     logo = None  # Prevent further errors if the image is missing
 
-# Display logo if it's loaded successfully
-if logo:
-    st.image(logo, width=100)
-
 # Layout for Logo and Title
 col1, col2 = st.columns([1, 5])
 with col1:
