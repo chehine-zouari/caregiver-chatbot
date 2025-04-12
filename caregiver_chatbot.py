@@ -32,6 +32,8 @@ class CaregiverChatbot:
                 return "😊 Aww, you're very welcome! I'm really glad I could help 💖"
             elif "help" in message:
                 return "🤝 Sure thing! Just tell me what you need and I’ll do my best to be useful."
+            elif "task" in message or "what are my care tasks" in message or "show tasks" in message:
+                return "📋 Here are your scheduled care tasks. Please check the section below.
             else:
                 return "🫶 You're doing great, seriously. Being a caregiver isn’t easy. How else can I support you today?"
 
@@ -52,6 +54,8 @@ class CaregiverChatbot:
                 return "✅ I’m always ready to assist. Let’s keep going strong!"
             elif "help" in message:
                 return "🚀 Just let me know what task or challenge you're dealing with — and we’ll tackle it step by step."
+            elif "task" in message or "what are my care tasks" in message or "show tasks" in message:
+                return "📋 Here are your scheduled care tasks. Please check the section below."
             else:
                 return "🛠️ What would you like to work on next? You’ve got this — and I’ve got your back."
 
