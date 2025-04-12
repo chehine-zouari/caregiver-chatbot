@@ -4,7 +4,7 @@ from caregiver_chatbot import CaregiverChatbot
 
 # Load the logo image
 try:
-    logo = Image.open("Logo")  # Ensure the logo file is in the same folder as your app.py
+    logo = Image.open("Logo.jpg")  # Ensure the logo file is in the same folder as your app.py
 except FileNotFoundError:
     st.error("Logo image not found. Please ensure 'your_logo.png' is in the same directory.")
     logo = None  # This prevents further errors if the image is missing
