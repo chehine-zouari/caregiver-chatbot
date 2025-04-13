@@ -3,22 +3,20 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
     
 class CaregiverChatbot:
-    def __init__(self, language="english", device="cpu", tone="neutral"):
-        self.language = language
-        self.device = device
-        self.tone = tone
-        
-   # Force CPU usage even if MPS (Apple GPU) is available
-   device = -1  # Default to CPU
-   if torch.cuda.is_available():
-      device = 0  # If CUDA GPU is available and working, you can allow it
-   elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
-      device = -1  # Explicitly force CPU if MPS is available but buggy
+    def __init__(self, language="en", device="cpu", tone="neutral"):
+        # Force CPU usage even if MPS (Apple GPU) is available
+        device = -1  # Default to CPU
+        if torch.cuda.is_available():
+            device = 0  # If CUDA GPU is available and working, you can allow it
+        elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+            device = -1  # Explicitly force CPU if MPS is available but buggy
 
-   self.sentiment_analyzer = pipeline(
-       "sentiment-analysis",
-       model="distilbert-base-uncased-finetuned-sst-2-english",
-       device=device)
+        # Initialize sentiment analysis model
+        self.sentiment_analyzer = pipeline(
+            "sentiment-analysis",
+            model="distilbert-base-uncased-finetuned-sst-2-english",
+            device=device
+        )
 
         # Initialize the model and tokenizer
         try:
