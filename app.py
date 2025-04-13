@@ -78,9 +78,7 @@ if st.sidebar.checkbox("📈 Show Mood Evolution Dashboard"):
     else:
         st.write("No conversation history to show mood evolution.")
 
-# Display the chat history
-for speaker, message in st.session_state.chat_history:
-    st.markdown(f"**{speaker}:** {message}")
+
 
 
 # Care Tasks Tracker in Sidebar
