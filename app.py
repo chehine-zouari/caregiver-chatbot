@@ -3,6 +3,7 @@ from PIL import Image
 from caregiver_chatbot import CaregiverChatbot
 import pandas as pd
 import matplotlib.pyplot as plt
+from datetime import datetime
 
 # Set page configuration (Title and Icon)
 st.set_page_config(page_title="Caregiver AI Support", page_icon="🤖")
@@ -39,28 +40,26 @@ user_input = st.text_input("You:", "")
 # Handling send button click
 if st.button("Send"):
     if user_input:
-        # Get the response from the chatbot
         response = chatbot.process_message(user_input)
-        # Store the conversation in session state
-        st.session_state.chat_history.append(("You", user_input))
-        st.session_state.chat_history.append(("Bot", response))
+        st.session_state.chat_history.append(("You", user_input, datetime.now()))
+        st.session_state.chat_history.append(("Bot", response, datetime.now()))
 
 # Provide quick support topic buttons
 st.markdown("#### Or select a quick support topic:")
 if st.button("💖 Emotional support"):
     response = chatbot.process_message("I feel overwhelmed")
-    st.session_state.chat_history.append(("You", "I feel overwhelmed"))
-    st.session_state.chat_history.append(("Bot", response))
+    st.session_state.chat_history.append(("You", "I feel overwhelmed", datetime.now()))
+    st.session_state.chat_history.append(("Bot", response, datetime.now()))
 
 if st.button("💊 Medication help"):
     response = chatbot.process_message("I need help with medication")
-    st.session_state.chat_history.append(("You", "I need help with medication"))
-    st.session_state.chat_history.append(("Bot", response))
+    st.session_state.chat_history.append(("You", "I need help with medication", datetime.now()))
+    st.session_state.chat_history.append(("Bot", response, datetime.now()))
 
 if st.button("📅 Appointment reminder"):
     response = chatbot.process_message("Help me manage appointments")
-    st.session_state.chat_history.append(("You", "Help me manage appointments"))
-    st.session_state.chat_history.append(("Bot", response))
+    st.session_state.chat_history.append(("You", "Help me manage appointments", datetime.now()))
+    st.session_state.chat_history.append(("Bot", response, datetime.now()))
 
 # Helper: convert sentiment scores to DataFrame
 def get_mood_df(history):
@@ -81,7 +80,6 @@ def get_mood_df(history):
         return pd.DataFrame({'Time': [], 'Mood Score': []})
 
     return pd.DataFrame({'Time': timestamps, 'Mood Score': scores})
-
 
 # Mood Evolution Dashboard
 if st.sidebar.checkbox("📈 Show Mood Evolution Dashboard"):
@@ -117,7 +115,9 @@ if st.sidebar.button("➕ Add Task"):
     else:
         st.sidebar.warning("Please enter a task description.")
 
-for speaker, message in st.session_state.chat_history:
+# Display chat history
+for entry in st.session_state.chat_history:
+    speaker, message = entry[0], entry[1]
     st.markdown(f"**{speaker}:** {message}")
 
 # Show care tasks if mentioned
