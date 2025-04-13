@@ -1,3 +1,4 @@
+from textblob import TextBlob
 class CaregiverChatbot:
     def __init__(self, tone="soft"):
         self.tone = tone  # Can be 'soft' or 'directive'
