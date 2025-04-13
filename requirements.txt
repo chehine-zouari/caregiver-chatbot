@@ -6,3 +6,4 @@ deep-translator
 transformers
 torch
 flask
+langdetect
