@@ -4,6 +4,11 @@ import os
 import streamlit.components.v1 as components
 import random
 import time
+from gtts import gTTS
+from pydub import AudioSegment
+import io
+import sys
+import subprocess
 
 # ------------------ PAGE CONFIG -------------------
 # This must be the very first Streamlit command
@@ -402,53 +407,37 @@ for resource in resources:
 
 
 
-import subprocess
-import sys
-
-# Function to install packages if not already installed
-def install_package(package):
-    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
-
-# Install required packages if they aren't installed already
-try:
-    import gtts
-except ImportError:
-    install_package('gTTS')
-
-try:
-    import pydub
-except ImportError:
-    install_package('pydub')
-
-try:
-    import pyaudio
-except ImportError:
-    install_package('pyaudio')
-
-# Now import Streamlit and other necessary libraries
-import streamlit as st
-from gtts import gTTS
-from pydub import AudioSegment
-import io
-
-# Function to generate text-to-speech
-def speak_text(text):
+# Function to convert text to speech and play audio
+def text_to_speech(text):
     tts = gTTS(text=text, lang='en')
-    audio_file = io.BytesIO()
+    # Save the audio to a file
+    audio_file = "speech.mp3"
     tts.save(audio_file)
-    audio_file.seek(0)
-    return audio_file
-
-# Streamlit interface
-st.title("Chatbot with Text-to-Speech")
-
-# User input for chatbot
-user_input = st.text_input("Say something to the chatbot:")
-
-if user_input:
-    st.write(f"You said: {user_input}")
     
-    # Convert user input to speech and play the audio
-    audio = speak_text(user_input)
-    st.audio(audio, format="audio/mp3")
+    # Convert the mp3 file to wav if necessary (optional, for compatibility)
+    audio = AudioSegment.from_mp3(audio_file)
+    wav_audio = "speech.wav"
+    audio.export(wav_audio, format="wav")
+    
+    # Play the audio in Streamlit
+    audio_data = open(wav_audio, 'rb').read()
+    st.audio(audio_data, format='audio/wav')
+    # Clean up by removing the temporary audio files
+    time.sleep(2)  # Wait for the audio to play before removing files
+    subprocess.call(['rm', audio_file])
+    subprocess.call(['rm', wav_audio])
 
+# Streamlit UI to interact with the chatbot and read a story
+st.title("Caregiver Chatbot with Story Mode")
+
+# Button to activate story mode
+if st.button("Read Me a Story"):
+    story = """
+    Once upon a time, in a land far, far away, there lived a brave knight named Sir Chatbot.
+    Sir Chatbot went on many adventures, helping those in need and solving mysteries with his wisdom.
+    One day, he encountered a dragon that could not speak. The dragon was sad, and Sir Chatbot knew just what to do.
+    With a few words of encouragement and understanding, Sir Chatbot was able to help the dragon find its voice, and they became fast friends.
+    Together, they traveled across the land, spreading joy and wisdom.
+    """
+    st.write(story)
+    text_to_speech(story)
