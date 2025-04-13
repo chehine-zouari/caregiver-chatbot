@@ -1,6 +1,7 @@
 import streamlit as st
 import base64
 import os
+import streamlit.components.v1 as components
 
 # ------------------ PAGE CONFIG -------------------
 # This must be the very first Streamlit command
@@ -25,96 +26,67 @@ inject_custom_background()
 
 # ------------------ MUSIC BACKGROUND -------------------
 
-# ✨ CSS Styles
-st.markdown(
-    """
-    <style>
-    [data-testid="stAppViewContainer"] {
-        background: linear-gradient(to right top, #a18cd1, #fbc2eb);
-        background-size: cover;
-        color: #ffffff;
-    }
-
-    .main-title {
-        font-size: 2.8rem;
-        font-weight: bold;
-        background: linear-gradient(to right, #fbc2eb, #a18cd1);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        text-align: center;
-        margin-top: 2rem;
-        margin-bottom: 1rem;
-    }
-
-    .aura-ring {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-top: 2rem;
-    }
-
-    .pulse-ring {
-        position: relative;
-        width: 200px;
-        height: 200px;
-        border-radius: 50%;
-        background: radial-gradient(circle at center, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.05) 70%);
-        box-shadow: 0 0 15px rgba(255,255,255,0.2);
-        animation: pulse 3s infinite ease-in-out;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .pulse-ring audio {
-        width: 160px;
-        border-radius: 10px;
-    }
-
-    @keyframes pulse {
-        0% {
-            box-shadow: 0 0 0 0 rgba(255,255,255,0.2);
-        }
-        50% {
-            box-shadow: 0 0 30px 20px rgba(255,255,255,0.05);
-        }
-        100% {
-            box-shadow: 0 0 0 0 rgba(255,255,255,0.2);
-        }
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
-
-# 🎵 Load and Embed Magical Music
+# 🎵 Load and Encode Audio File
 def load_audio_base64(file_path):
     with open(file_path, "rb") as f:
         data = f.read()
     return base64.b64encode(data).decode()
 
+# Path to audio file
 audio_path = "magical.mp4"
 
-# 🎨 UI
-st.markdown('<div class="main-title">🌠 Magical Soothing Music</div>', unsafe_allow_html=True)
+# Main title
+st.markdown('<div class="main-title">✨ Magical Vibes ✨</div>', unsafe_allow_html=True)
 
+# 🎶 Inject HTML with Custom Visualizer-style Animation
 if os.path.exists(audio_path):
     encoded_audio = load_audio_base64(audio_path)
 
-    # 🌀 Audio inside animated ring
-    st.markdown(
-        f"""
-        <div class="aura-ring">
-            <div class="pulse-ring">
-                <audio controls autoplay loop>
-                    <source src="data:audio/mp4;base64,{encoded_audio}" type="audio/mp4">
-                    Your browser does not support the audio element.
-                </audio>
+    components.html(f"""
+        <html>
+        <head>
+            <style>
+                .wave-container {{
+                    display: flex;
+                    justify-content: center;
+                    margin-top: 40px;
+                }}
+
+                .bar {{
+                    width: 5px;
+                    height: 20px;
+                    background: white;
+                    margin: 0 3px;
+                    animation: pulse 1s infinite ease-in-out;
+                }}
+
+                .bar:nth-child(2) {{ animation-delay: 0.1s; }}
+                .bar:nth-child(3) {{ animation-delay: 0.2s; }}
+                .bar:nth-child(4) {{ animation-delay: 0.3s; }}
+                .bar:nth-child(5) {{ animation-delay: 0.4s; }}
+
+                @keyframes pulse {{
+                    0%, 100% {{ transform: scaleY(0.5); }}
+                    50% {{ transform: scaleY(1.5); }}
+                }}
+            </style>
+        </head>
+        <body>
+            <audio id="audioPlayer" autoplay loop>
+                <source src="data:audio/mp4;base64,{encoded_audio}" type="audio/mp4">
+                Your browser does not support the audio element.
+            </audio>
+
+            <div class="wave-container">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
             </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+        </body>
+        </html>
+    """, height=150)
 else:
     st.error("⚠️ The file 'magical.mp4' was not found. Please upload it to your project folder.")
 
