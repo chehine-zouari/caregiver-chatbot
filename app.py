@@ -376,7 +376,7 @@ resources = [
 ]
 
 # Display the title and introduction
-
+st.title("Caregiver AI Support")
 st.write("Welcome to the Caregiver Support Chatbot. Explore resources to help you manage caregiving tasks and improve your well-being.")
 
 # Search function for resources
