@@ -1,50 +1,35 @@
 import torch
-from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
-from langdetect import detect
-import openai
-import logging
-
-openai.api_key = 'your-openai-api-key'
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 class CaregiverChatbot:
-    def __init__(self, language="en", device=-1):
+    def __init__(self, language="en", device=-1, tone="soft"):
         self.language = language
         self.device = device
-        self.model, self.tokenizer = self.load_model(language)
+        self.tone = tone
 
-    def load_model(self, language):
+        # Initialize the model and tokenizer
         try:
-            model_name = f"Helsinki-NLP/opus-mt-en-{language}" if language != 'en' else "t5-base"
-            model = AutoModelForSeq2SeqLM.from_pretrained(model_name).to(self.device)
-            tokenizer = AutoTokenizer.from_pretrained(model_name)
-            return model, tokenizer
+            model_name = "gpt2"  # Change to your model's name
+            self.model = AutoModelForCausalLM.from_pretrained(model_name)
+            self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+            self.model.to(self.device)
         except Exception as e:
-            logging.error(f"Failed to load model for language {language}: {e}")
-            raise ValueError("Model loading failed")
-
-    def process_message(self, message):
-        try:
-            inputs = self.tokenizer(message, return_tensors="pt", padding=True, truncation=True).to(self.device)
-            output = self.model.generate(**inputs)
-            response = self.tokenizer.decode(output[0], skip_special_tokens=True)
-            return response
-        except Exception as e:
-            logging.error(f"Error processing message: {e}")
-            return "Sorry, I couldn't understand that."
-
-    def analyze_sentiment(self, message):
-        try:
-            response = openai.Completion.create(
-                model="text-davinci-003",
-                prompt=f"Analyze the sentiment of this message: '{message}'",
-                max_tokens=60
-            )
-            sentiment_score = response.choices[0].text.strip()
-            return {"score": sentiment_score}
-        except Exception as e:
-            logging.error(f"Error analyzing sentiment: {e}")
-            return {"score": 0}
+            print(f"Error initializing the chatbot: {e}")
 
     def set_language(self, language):
         self.language = language
-        self.model, self.tokenizer = self.load_model(language)
+        # Implement any language-specific handling here, if necessary.
+
+    def set_tone(self, tone):
+        self.tone = tone
+        # Implement tone-specific handling if necessary (soft or directive).
+        
+    def process_message(self, message):
+        input_ids = self.tokenizer.encode(message, return_tensors='pt').to(self.device)
+        response_ids = self.model.generate(input_ids, max_length=100)
+        response = self.tokenizer.decode(response_ids[0], skip_special_tokens=True)
+        return response
+
+    def analyze_sentiment(self, text):
+        # Implement sentiment analysis logic here if necessary
+        return {"score": 0.5}  # Placeholder
