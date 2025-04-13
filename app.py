@@ -9,6 +9,7 @@ from pydub import AudioSegment
 import io
 import sys
 import subprocess
+from io import BytesIO
 
 # ------------------ PAGE CONFIG -------------------
 # This must be the very first Streamlit command
@@ -406,38 +407,32 @@ for resource in resources:
     st.markdown(f"- [{resource['title']}]({resource['link']}) ({resource['type']})")
 
 
+# Function to play the story using gTTS (Text-to-Speech)
+def play_story(story_text):
+    tts = gTTS(text=story_text, lang='en')
+    story_audio = BytesIO()
+    tts.save(story_audio)
+    story_audio.seek(0)
 
-# Function to convert text to speech and play audio
-def text_to_speech(text):
-    tts = gTTS(text=text, lang='en')
-    # Save the audio to a file
-    audio_file = "speech.mp3"
-    tts.save(audio_file)
-    
-    # Convert the mp3 file to wav if necessary (optional, for compatibility)
-    audio = AudioSegment.from_mp3(audio_file)
-    wav_audio = "speech.wav"
-    audio.export(wav_audio, format="wav")
-    
-    # Play the audio in Streamlit
-    audio_data = open(wav_audio, 'rb').read()
-    st.audio(audio_data, format='audio/wav')
-    # Clean up by removing the temporary audio files
-    time.sleep(2)  # Wait for the audio to play before removing files
-    subprocess.call(['rm', audio_file])
-    subprocess.call(['rm', wav_audio])
+    # Use pydub to load the audio and convert it to a format that Streamlit can handle
+    audio = AudioSegment.from_mp3(story_audio)
+    audio.export(story_audio, format="wav")
+    story_audio.seek(0)
 
-# Streamlit UI to interact with the chatbot and read a story
+    # Return the audio file to Streamlit
+    return story_audio
+
+# Streamlit UI elements
 st.title("Caregiver Chatbot with Story Mode")
 
-# Button to activate story mode
+# Option for the user to read a story
+story = """
+Once upon a time, in a land far, far away, there lived a brave knight named Sir Chatbot. Sir Chatbot had a magic sword that could answer any question, and he used it to help the people of his kingdom.
+"""
+
 if st.button("Read Me a Story"):
-    story = """
-    Once upon a time, in a land far, far away, there lived a brave knight named Sir Chatbot.
-    Sir Chatbot went on many adventures, helping those in need and solving mysteries with his wisdom.
-    One day, he encountered a dragon that could not speak. The dragon was sad, and Sir Chatbot knew just what to do.
-    With a few words of encouragement and understanding, Sir Chatbot was able to help the dragon find its voice, and they became fast friends.
-    Together, they traveled across the land, spreading joy and wisdom.
-    """
     st.write(story)
-    text_to_speech(story)
+    audio_file = play_story(story)
+    
+    # Allow the user to play the audio file
+    st.audio(audio_file, format="audio/wav")
