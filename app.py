@@ -32,14 +32,14 @@ language_choice = st.selectbox(
     ["English", "Mandarin Chinese", "Hindi", "Spanish", "French", "Standard Arabic", "Bengali", "Portuguese", "Russian", "Urdu"]
 )
 
+# Tone selection menu (Soft or Directive)
+tone_choice = st.selectbox("Select chatbot tone:", ["Soft", "Directive"])
+
 # Check if GPU is available, otherwise use CPU
 device = 0 if torch.cuda.is_available() else -1  # Use GPU if available, otherwise use CPU
 
-# Initialize the chatbot with the selected language and device
-try:
-    chatbot = CaregiverChatbot(language=language_choice.lower(), device=device)
-except Exception as e:
-    st.error(f"Error initializing the chatbot: {e}")
+# Initialize the chatbot with the selected language and tone
+chatbot = CaregiverChatbot(language=language_choice.lower(), device=device, tone=tone_choice.lower())
 
 # Initialize chat history if not already present
 if "chat_history" not in st.session_state:
