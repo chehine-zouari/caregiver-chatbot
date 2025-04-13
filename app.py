@@ -103,7 +103,14 @@ if st.sidebar.checkbox("📈 Show Mood Evolution Dashboard"):
     df = get_mood_df(st.session_state.chat_history)
     if not df.empty:
         st.subheader("Caregiver Mood Evolution Over Time")
-        st.line_chart(df.rename(columns={"Time": "index"}).set_index("index"))
+        if "Time" in df.columns:
+           df_renamed = df.rename(columns={"Time": "index"}).set_index("index")
+           st.line_chart(df_renamed)
+        else:
+           st.error("⛔ The 'Time' column is missing from the data. Please check the DataFrame format.")
+           st.write("Available columns:", df.columns.tolist())
+           st.dataframe(df)
+
         st.caption("This chart shows how the caregiver's emotional tone has changed over time based on their messages.")
     else:
         st.write("No conversation history to show mood evolution.")
