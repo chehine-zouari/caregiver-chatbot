@@ -370,7 +370,7 @@ resources = [
     {"title": "Raising a Child with Medical Complexity", "link": "https://blog.cincinnatichildrens.org/rare-and-complex-conditions/caring-for-a-medically-complex-child-your-resource-checklist/", "type": "Article"},
     {"title": "Supporting Your Child’s Emotional Needs", "link": "https://youtu.be/nmqdQK3uPmg", "type": "Video"},
     {"title": "Caregiver Self-Care Tips", "link": "https://www.nia.nih.gov/health/caregiving/taking-care-yourself-tips-caregivers", "type": "Article"},
-    {"title": "Managing Caregiver Burnout", "link": "Managing Caregiver Burnout", "type": "Video"},
+    {"title": "Managing Caregiver Burnout", "link": "https://youtu.be/Y3pKzjD4_7c", "type": "Video"},
     {"title": "Caring for Your Child's Medical Needs: A Guide for Parents", "link": "https://childrenfirst.com/quality-care-for-your-child-with-complex-medical-needs/", "type": "Article"},
     {"title": "Self-Care for Family Caregivers", "link": "https://www.caregiver.org/resource/taking-care-you-self-care-family-caregivers/", "type": "Article"}
 ]
