@@ -73,7 +73,7 @@ if st.sidebar.checkbox("📈 Show Mood Evolution Dashboard"):
         st.write("No conversation history to show mood evolution.")
 
 # Care Tasks Tracker
-st.sidebar.markdown("## 🦧 Care Tasks Tracker")
+st.sidebar.markdown("## 📋 Care Tasks Tracker")
 if "tasks" not in st.session_state:
     st.session_state.tasks = []
 
