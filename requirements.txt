@@ -9,3 +9,6 @@ flask
 langdetect
 googletrans
 openai
+gTTS
+pydub
+pyaudio
