@@ -23,19 +23,27 @@ def inject_custom_background():
 inject_custom_background()
 
 # ------------------ MUSIC BACKGROUND -------------------
-def autoplay_audio(file_path: str):
+def load_audio_base64(file_path: str) -> str:
     with open(file_path, "rb") as f:
         audio_bytes = f.read()
-        encoded = base64.b64encode(audio_bytes).decode()
+        return base64.b64encode(audio_bytes).decode()
+
+def toggle_audio(encoded_audio: str, play_audio: bool):
+    if play_audio:
         audio_html = f"""
             <audio autoplay loop>
-                <source src="data:audio/mp3;base64,{encoded}" type="audio/mp3">
+                <source src="data:audio/mp3;base64,{encoded_audio}" type="audio/mp3">
             </audio>
         """
         st.markdown(audio_html, unsafe_allow_html=True)
 
-# Autoplay background music
-autoplay_audio("magical.mp4")
+# Checkbox to toggle music
+st.sidebar.markdown("🎵 **Magical Ambiance**")
+play_music = st.sidebar.checkbox("Play Background Music", value=True)
+
+# Load and toggle audio
+encoded_music = load_audio_base64("magic_theme.mp3")
+toggle_audio(encoded_music, play_music)
 
 # ------------------ HEADER AND CONTENT -------------------
 from PIL import Image
