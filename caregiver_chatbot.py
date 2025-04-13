@@ -1,3 +1,6 @@
+from transformers import pipeline
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
 class CaregiverChatbot:
     def __init__(self, language="en", device=-1, tone="soft"):
         self.language = language
