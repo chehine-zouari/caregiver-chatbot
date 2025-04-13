@@ -26,12 +26,13 @@ class CaregiverChatbot:
         """
         try:
             sentiment_result = self.sentiment_analyzer(message)
-            sentiment = sentiment_result[0]['label']  # 'LABEL_0' for negative, 'LABEL_1' for positive
-            score = sentiment_result[0]['score']
-            return sentiment, score
+            # Ensure the result is consistent and return it in a structured way
+            sentiment = sentiment_result[0]['label'] if sentiment_result else "NEUTRAL"
+            score = sentiment_result[0]['score'] if sentiment_result else 0.0
+            return {"label": sentiment, "score": score}
         except Exception as e:
             print(f"Error in sentiment analysis: {e}")
-            return "NEUTRAL", 0.0  # In case of error, return neutral sentiment
+            return {"label": "NEUTRAL", "score": 0.0}  # Return neutral in case of error
 
     def process_message(self, message):
         """
@@ -91,8 +92,8 @@ if __name__ == "__main__":
 
     # Example message to process and analyze sentiment
     message = "I'm feeling anxious"
-    sentiment, score = chatbot.analyze_sentiment(message)
-    print(f"Sentiment: {sentiment}, Score: {score}")
+    sentiment = chatbot.analyze_sentiment(message)
+    print(f"Sentiment: {sentiment['label']}, Score: {sentiment['score']}")
 
     # Example response based on tone
     response = chatbot.process_message(message)
