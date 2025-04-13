@@ -2,6 +2,9 @@ import streamlit as st
 import base64
 import os
 import streamlit.components.v1 as components
+import random
+import time
+from wordsearch import WordSearch
 
 # ------------------ PAGE CONFIG -------------------
 # This must be the very first Streamlit command
@@ -240,3 +243,60 @@ if st.checkbox("📋 Show Care Tasks"):
             st.markdown(f"**{task['type']}** — {task['name']} at {task['time']} on {task['date']}")
     else:
         st.info("No tasks scheduled yet. Use the sidebar to add care activities.")
+
+
+
+
+# Function to generate word search puzzle
+def generate_word_search():
+    words = ['care', 'love', 'peace', 'relax', 'calm']
+    ws = WordSearch(words, size=10)
+    return ws.generate()
+
+# Fun affirmations
+affirmations = [
+    "You are doing great, keep it up!",
+    "Remember to take a break, your health matters!",
+    "You are strong and resilient!",
+    "Take a deep breath and smile, you're doing amazing!",
+]
+
+# Streamlit UI
+st.title("Caregiver Emotional Support Games")
+
+# Options for games/activities
+activity = st.selectbox("Choose an activity", ("Word Search", "Journaling", "Breathing Exercise", "Positive Affirmation"))
+
+if activity == "Word Search":
+    st.subheader("Word Search Game")
+    puzzle = generate_word_search()
+    st.text(puzzle)
+
+elif activity == "Journaling":
+    st.subheader("Journaling Activity")
+    journal_entry = st.text_area("Write your thoughts here...", height=200)
+    if journal_entry:
+        st.write("Your thoughts today:")
+        st.write(journal_entry)
+    else:
+        st.write("Take your time to reflect and write...")
+
+elif activity == "Breathing Exercise":
+    st.subheader("Breathing Exercise")
+    breath_inhale = st.button("Inhale for 4 seconds")
+    breath_hold = st.button("Hold for 7 seconds")
+    breath_exhale = st.button("Exhale for 8 seconds")
+
+    if breath_inhale:
+        st.write("Inhale for 4 seconds...")
+        time.sleep(4)
+        st.write("Hold your breath...")
+        time.sleep(7)
+        st.write("Exhale slowly...")
+        time.sleep(8)
+        st.write("Repeat this a few times to calm your mind.")
+
+elif activity == "Positive Affirmation":
+    st.subheader("Get a Positive Affirmation")
+    if st.button("Get Affirmation"):
+        st.write(random.choice(affirmations))
