@@ -5,16 +5,17 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
 import base64
+from langdetect import detect
 
 # Set page configuration (Title and Icon)
 st.set_page_config(page_title="Caregiver AI Support", page_icon="🤖")
 
 # Load the logo image
 try:
-    logo = Image.open("Logo.jpg")
+    logo = Image.open("Logo.jpg")  # Ensure the logo file is in the same folder as your app.py
 except FileNotFoundError:
     st.error("Logo image not found. Please ensure 'Logo.jpg' is in the same directory.")
-    logo = None
+    logo = None  # Prevent further errors if the image is missing
 
 # Layout for Logo and Title
 col1, col2 = st.columns([1, 5])
@@ -25,55 +26,84 @@ with col2:
     st.markdown("## 🤖 Digital Care Companion 🤖")
     st.markdown("**Empowering caregivers of children with medical complexity through AI.**")
 
-# Tone selection
-tone_choice = st.selectbox("Choose your support style:", ["Soft", "Directive"])
-chatbot = CaregiverChatbot(tone=tone_choice.lower())
+# Language selection menu
+language_choice = st.selectbox(
+    "Choose your language:",
+    ["English", "Mandarin Chinese", "Hindi", "Spanish", "French", "Standard Arabic", "Bengali", "Portuguese", "Russian", "Urdu"]
+)
 
-# Initialize chat history
+# Initialize the chatbot with the selected language
+chatbot = CaregiverChatbot(language=language_choice.lower())
+
+# Initialize chat history if not already present
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
-# User input
+# User input area
 user_input = st.text_input("You:", "")
+
+# Language detection
+def detect_language(text):
+    try:
+        return detect(text)
+    except:
+        return "en"  # Default to English if language detection fails
+
+# Handling send button click
 if st.button("Send"):
     if user_input:
+        detected_language = detect_language(user_input)
+        chatbot.set_language(detected_language)  # Change language based on detected input
         response = chatbot.process_message(user_input)
         st.session_state.chat_history.append(("You", user_input, datetime.now()))
         st.session_state.chat_history.append(("Bot", response, datetime.now()))
 
-# Quick buttons
+# Provide quick support topic buttons
 st.markdown("#### Or select a quick support topic:")
-quick_options = {
-    "💖 Emotional support": "I feel overwhelmed",
-    "💊 Medication help": "I need help with medication",
-    "📅 Appointment reminder": "Help me manage appointments"
-}
-for label, prompt in quick_options.items():
-    if st.button(label):
-        response = chatbot.process_message(prompt)
-        st.session_state.chat_history.append(("You", prompt, datetime.now()))
-        st.session_state.chat_history.append(("Bot", response, datetime.now()))
 
-# Mood tracking
+if st.button("💖 Emotional support"):
+    response = chatbot.process_message("I feel overwhelmed")
+    st.session_state.chat_history.append(("You", "I feel overwhelmed", datetime.now()))
+    st.session_state.chat_history.append(("Bot", response, datetime.now()))
+
+if st.button("💊 Medication help"):
+    response = chatbot.process_message("I need help with medication")
+    st.session_state.chat_history.append(("You", "I need help with medication", datetime.now()))
+    st.session_state.chat_history.append(("Bot", response, datetime.now()))
+
+if st.button("📅 Appointment reminder"):
+    response = chatbot.process_message("Help me manage appointments")
+    st.session_state.chat_history.append(("You", "Help me manage appointments", datetime.now()))
+    st.session_state.chat_history.append(("Bot", response, datetime.now()))
+
+# Helper: convert sentiment scores to DataFrame
 def get_mood_df(history):
-    timestamps, scores = [], []
+    timestamps = []
+    scores = []
+
     for entry in history:
         if entry[0] == 'You' and len(entry) >= 3:
             timestamps.append(entry[2])
             scores.append(chatbot.analyze_sentiment(entry[1])['score'])
-    return pd.DataFrame({'Time': timestamps, 'Mood Score': scores}) if timestamps else pd.DataFrame({'Time': [], 'Mood Score': []})
 
+    if not timestamps or not scores:
+        return pd.DataFrame({'Time': [], 'Mood Score': []})
+
+    return pd.DataFrame({'Time': timestamps, 'Mood Score': scores})
+
+# Mood Evolution Dashboard
 if st.sidebar.checkbox("📈 Show Mood Evolution Dashboard"):
     df = get_mood_df(st.session_state.chat_history)
     if not df.empty:
         st.subheader("Caregiver Mood Evolution Over Time")
         st.line_chart(df.rename(columns={"Time": "index"}).set_index("index"))
-        st.caption("Mood tracking powered by BERT-based sentiment analysis.")
+        st.caption("This chart shows how the caregiver's emotional tone has changed over time based on their messages.")
     else:
         st.write("No conversation history to show mood evolution.")
 
-# Care Tasks Tracker
+# Care Tasks Tracker in Sidebar
 st.sidebar.markdown("## 📋 Care Tasks Tracker")
+
 if "tasks" not in st.session_state:
     st.session_state.tasks = []
 
@@ -95,11 +125,11 @@ if st.sidebar.button("➕ Add Task"):
     else:
         st.sidebar.warning("Please enter a task description.")
 
-# Export chat history
+# Export Chat History as CSV
 if st.sidebar.button("⬇️ Export Chat History"):
     if st.session_state.chat_history:
         df_chat = pd.DataFrame(
-            [(s, m, t.strftime("%Y-%m-%d %H:%M:%S")) for s, m, t in st.session_state.chat_history],
+            [(speaker, message, timestamp.strftime("%Y-%m-%d %H:%M:%S")) for speaker, message, timestamp in st.session_state.chat_history],
             columns=["Speaker", "Message", "Timestamp"]
         )
         csv = df_chat.to_csv(index=False).encode('utf-8')
@@ -109,15 +139,13 @@ if st.sidebar.button("⬇️ Export Chat History"):
     else:
         st.sidebar.warning("No chat history available to export.")
 
-# Chat history display
 for speaker, message, *_ in st.session_state.chat_history:
     st.markdown(f"**{speaker}:** {message}")
 
-# Task display
 if st.checkbox("📋 Show Care Tasks"):
     st.subheader("Scheduled Care Tasks")
     if st.session_state.tasks:
-        for task in st.session_state.tasks:
+        for i, task in enumerate(st.session_state.tasks):
             st.markdown(f"**{task['type']}** — {task['name']} at {task['time']} on {task['date']}")
     else:
         st.info("No tasks scheduled yet. Use the sidebar to add care activities.")
