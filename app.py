@@ -5,17 +5,17 @@ import pandas as pd
 from datetime import datetime
 import base64
 from langdetect import detect
-import torch  # Import torch to check if GPU is available
+import torch
 
 # Set page configuration (Title and Icon)
 st.set_page_config(page_title="Caregiver AI Support", page_icon="🤖")
 
 # Load the logo image
 try:
-    logo = Image.open("Logo.jpg")  # Ensure the logo file is in the same folder as your app.py
+    logo = Image.open("Logo.jpg")  
 except FileNotFoundError:
     st.error("Logo image not found. Please ensure 'Logo.jpg' is in the same directory.")
-    logo = None  # Prevent further errors if the image is missing
+    logo = None  
 
 # Layout for Logo and Title
 col1, col2 = st.columns([1, 5])
@@ -36,7 +36,7 @@ language_choice = st.selectbox(
 tone_choice = st.selectbox("Select chatbot tone:", ["Soft", "Directive"])
 
 # Check if GPU is available, otherwise use CPU
-device = 0 if torch.cuda.is_available() else -1  # Use GPU if available, otherwise use CPU
+device = 0 if torch.cuda.is_available() else -1  
 
 # Initialize the chatbot with the selected language and tone
 chatbot = CaregiverChatbot(language=language_choice.lower(), device=device, tone=tone_choice.lower())
@@ -53,13 +53,13 @@ def detect_language(text):
     try:
         return detect(text)
     except:
-        return "en"  # Default to English if language detection fails
+        return "en"  
 
 # Handling send button click
 if st.button("Send"):
     if user_input:
         detected_language = detect_language(user_input)
-        chatbot.set_language(detected_language)  # Change language based on detected input
+        chatbot.set_language(detected_language)  
         response = chatbot.process_message(user_input)
         st.session_state.chat_history.append(("You", user_input, datetime.now()))
         st.session_state.chat_history.append(("Bot", response, datetime.now()))
@@ -89,10 +89,10 @@ def get_mood_df(chat_history):
 
     # Iterate through the chat history
     for entry in chat_history:
-        sentiment_result = chatbot.analyze_sentiment(entry[1])  # Assuming entry[1] is the message text
+        sentiment_result = chatbot.analyze_sentiment(entry[1])
 
-        moods.append(sentiment_result['label'])  # Add the sentiment label
-        scores.append(sentiment_result['score'])  # Add the sentiment score
+        moods.append(sentiment_result['label'])
+        scores.append(sentiment_result['score'])
 
     # Create the DataFrame
     df = pd.DataFrame({"Mood": moods, "Score": scores})
@@ -103,14 +103,7 @@ if st.sidebar.checkbox("📈 Show Mood Evolution Dashboard"):
     df = get_mood_df(st.session_state.chat_history)
     if not df.empty:
         st.subheader("Caregiver Mood Evolution Over Time")
-        
-        # Check if 'Time' column exists in the dataframe
-        if 'Time' in df.columns:
-            df = df.rename(columns={"Time": "index"})  # Rename 'Time' to 'index'
-            st.line_chart(df.set_index("index"))  # Set the 'index' column as the index and display the chart
-        else:
-            st.line_chart(df)  # If 'Time' column is missing, just display the mood evolution without renaming
-        
+        st.line_chart(df.rename(columns={"Time": "index"}).set_index("index"))
         st.caption("This chart shows how the caregiver's emotional tone has changed over time based on their messages.")
     else:
         st.write("No conversation history to show mood evolution.")
