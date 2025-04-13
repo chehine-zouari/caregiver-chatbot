@@ -1,6 +1,6 @@
 import streamlit as st
 from PIL import Image
-from caregiver_chatbot_class import CaregiverChatbot  # Importing the CaregiverChatbot class from the other file
+from caregiver_chatbot import CaregiverChatbot
 import pandas as pd
 from datetime import datetime
 import base64
@@ -35,8 +35,11 @@ language_choice = st.selectbox(
 # Check if GPU is available, otherwise use CPU
 device = 0 if torch.cuda.is_available() else -1  # Use GPU if available, otherwise use CPU
 
-# Initialize the chatbot with the selected language
-chatbot = CaregiverChatbot(language=language_choice.lower(), device=device)
+# Initialize the chatbot with the selected language and device
+try:
+    chatbot = CaregiverChatbot(language=language_choice.lower(), device=device)
+except Exception as e:
+    st.error(f"Error initializing the chatbot: {e}")
 
 # Initialize chat history if not already present
 if "chat_history" not in st.session_state:
