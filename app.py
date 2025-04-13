@@ -25,38 +25,37 @@ inject_custom_background()
 
 # ------------------ MUSIC BACKGROUND -------------------
 
-# Load audio from magical.mp4 (make sure it's in same dir)
+# 🎵 Load and Encode Magical Music (from mp4)
 def load_video_base64(file_path):
     with open(file_path, "rb") as f:
         data = f.read()
     return base64.b64encode(data).decode()
 
 video_file = "magical.mp4"
+
 if os.path.exists(video_file):
     encoded_video = load_video_base64(video_file)
 
-    # Embed the hidden video player for audio purposes
+    # Embed hidden video for music playback
     st.markdown(
         f"""
-        <video id="bgVideo" loop style="display:none;">
+        <video id="bgVideo" loop style="display: none;">
             <source src="data:video/mp4;base64,{encoded_video}" type="video/mp4">
         </video>
         <script>
-        const video = document.getElementById("bgVideo");
-
-        function playVideo() {{
-            video.play();
-        }}
-
-        function pauseVideo() {{
-            video.pause();
-        }}
+            var video = document.getElementById("bgVideo");
+            function playVideo() {{
+                video.play();
+            }}
+            function pauseVideo() {{
+                video.pause();
+            }}
         </script>
         """,
         unsafe_allow_html=True
     )
 
-    # Play / Pause buttons
+    # UI: Music Control Buttons
     col1, col2 = st.columns(2)
     with col1:
         if st.button("🔊 Turn ON Music"):
@@ -65,7 +64,7 @@ if os.path.exists(video_file):
         if st.button("🔇 Turn OFF Music"):
             st.markdown("<script>pauseVideo();</script>", unsafe_allow_html=True)
 else:
-    st.error("⚠️ 'magical.mp4' not found. Please upload it to the app directory.")
+    st.error("⚠️ 'magical.mp4' not found in your project folder.")
 
 # ------------------ HEADER AND CONTENT -------------------
 from PIL import Image
