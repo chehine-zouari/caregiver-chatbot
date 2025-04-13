@@ -6,47 +6,40 @@ st.set_page_config(page_title="Caregiver AI Support", page_icon="🤖")
 
 # ------------------ MAGIC BACKGROUND -------------------
 def inject_custom_background():
-    st.markdown("""
+   st.markdown("""
     <style>
+    /* Full page background with animated gradient */
     body {
-        background-color: #0f2027;
-        background-image: linear-gradient(315deg, #0f2027 0%, #203a43 74%, #2c5364 100%);
-        color: white;
+        background: linear-gradient(270deg, #e0c3fc, #8ec5fc, #f3e5f5);
+        background-size: 600% 600%;
+        animation: gradientBG 20s ease infinite;
     }
-    html, body, [class*="css"]  {
-        font-family: 'Nunito', sans-serif;
+
+    @keyframes gradientBG {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    /* Streamlit's main block override */
+    .stApp {
+        background-color: transparent;
+    }
+
+    /* Optional: Add magical sparkles */
+    .sparkles {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: url('https://cdn.jsdelivr.net/gh/JulianNorton/pure-css-sparkles@main/sparkles.gif') repeat;
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.3;
     }
     </style>
+    <div class="sparkles"></div>
+""", unsafe_allow_html=True)
 
-    <link href="https://fonts.googleapis.com/css2?family=Nunito&display=swap" rel="stylesheet">
-
-    <script src="https://cdn.jsdelivr.net/npm/tsparticles@1.37.5/tsparticles.min.js"></script>
-    <div id="tsparticles"></div>
-    <style>
-        #tsparticles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -1;
-        }
-    </style>
-    <script>
-        tsParticles.load("tsparticles", {
-            background: { color: { value: "#0f2027" } },
-            fpsLimit: 60,
-            particles: {
-                color: { value: "#ffffff" },
-                links: { enable: true, color: "#ffffff", distance: 150 },
-                move: { enable: true, speed: 1 },
-                number: { value: 80 },
-                opacity: { value: 0.3 },
-                size: { value: 2 }
-            }
-        });
-    </script>
-    """, unsafe_allow_html=True)
 
 inject_custom_background()
 
