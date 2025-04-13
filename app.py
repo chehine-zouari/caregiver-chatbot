@@ -5,37 +5,57 @@ import pandas as pd
 from datetime import datetime
 import base64
 from langdetect import detect
-import torch
+import torch  # Import torch to check if GPU is available
 
-# VANTA.JS Fog Background Setup
-st.set_page_config(page_title="Caregiver AI Support", page_icon="🤖", layout="wide")
+# ------------------ MAGIC BACKGROUND -------------------
+def inject_custom_background():
+    st.markdown("""
+    <style>
+    body {
+        background-color: #0f2027;
+        background-image: linear-gradient(315deg, #0f2027 0%, #203a43 74%, #2c5364 100%);
+        color: white;
+    }
+    html, body, [class*="css"]  {
+        font-family: 'Nunito', sans-serif;
+    }
+    </style>
 
-st.markdown("""
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.fog.min.js"></script>
-    <div id="vanta-bg" style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1;"></div>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@1.37.5/tsparticles.min.js"></script>
+    <div id="tsparticles"></div>
+    <style>
+        #tsparticles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+        }
+    </style>
     <script>
-        VANTA.FOG({
-          el: "#vanta-bg",
-          mouseControls: true,
-          touchControls: true,
-          highlightColor: 0xf4e2d8,
-          midtoneColor: 0xb8c6db,
-          lowlightColor: 0x8ec5fc,
-          baseColor: 0xffffff,
-          blurFactor: 0.7,
-          speed: 1.5,
-          zoom: 0.85
-        })
+        tsParticles.load("tsparticles", {
+            background: { color: { value: "#0f2027" } },
+            fpsLimit: 60,
+            particles: {
+                color: { value: "#ffffff" },
+                links: { enable: true, color: "#ffffff", distance: 150 },
+                move: { enable: true, speed: 1 },
+                number: { value: 80 },
+                opacity: { value: 0.3 },
+                size: { value: 2 }
+            }
+        });
     </script>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
-# Start translucent container for foreground content
-st.markdown("""
-    <div style="background-color: rgba(255, 255, 255, 0.85); padding: 2rem; border-radius: 1rem;">
-""", unsafe_allow_html=True)
+inject_custom_background()
 
-# Load the logo
+# ------------------ PAGE CONFIG -------------------
+st.set_page_config(page_title="Caregiver AI Support", page_icon="🤖")
+
 try:
     logo = Image.open("Logo.jpg")
 except FileNotFoundError:
@@ -100,12 +120,10 @@ if st.button("📅 Appointment reminder"):
 def get_mood_df(chat_history):
     moods = []
     scores = []
-
     for entry in chat_history:
         sentiment_result = chatbot.analyze_sentiment(entry[1])
         moods.append(sentiment_result['label'])
         scores.append(sentiment_result['score'])
-
     df = pd.DataFrame({"Mood": moods, "Score": scores})
     return df
 
@@ -113,7 +131,11 @@ if st.sidebar.checkbox("📈 Show Mood Evolution Dashboard"):
     df = get_mood_df(st.session_state.chat_history)
     if not df.empty:
         st.subheader("Caregiver Mood Evolution Over Time")
-        st.line_chart(df)  # Simplified since 'Time' column was never created
+        if 'Time' in df.columns:
+            df = df.rename(columns={"Time": "index"})
+            st.line_chart(df.set_index("index"))
+        else:
+            st.line_chart(df)
         st.caption("This chart shows how the caregiver's emotional tone has changed over time based on their messages.")
     else:
         st.write("No conversation history to show mood evolution.")
@@ -164,6 +186,3 @@ if st.checkbox("📋 Show Care Tasks"):
             st.markdown(f"**{task['type']}** — {task['name']} at {task['time']} on {task['date']}")
     else:
         st.info("No tasks scheduled yet. Use the sidebar to add care activities.")
-
-# Close translucent container
-st.markdown("</div>", unsafe_allow_html=True)
