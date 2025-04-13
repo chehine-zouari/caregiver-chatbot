@@ -1,31 +1,12 @@
 from transformers import pipeline
 from transformers import AutoModelForCausalLM, AutoTokenizer
-import torch
-    
-class CaregiverChatbot:
-    def __init__(self, language="en", device="cpu", tone="neutral"):
-        # Explicitly check for available devices
-        if torch.cuda.is_available():
-            device = 0  # CUDA GPU
-        elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
-            device = -1  # MPS GPU, but might not support all models
-        else:
-            device = -1  # Fallback to CPU
 
-        # Initialize sentiment analysis pipeline with correct device handling
-        try:
-            self.sentiment_analyzer = pipeline(
-                "sentiment-analysis",
-                model="distilbert-base-uncased-finetuned-sst-2-english",
-                device=device
-            )
-        except NotImplementedError as e:
-            print(f"Error with device {device}: {e}. Falling back to CPU.")
-            self.sentiment_analyzer = pipeline(
-                "sentiment-analysis",
-                model="distilbert-base-uncased-finetuned-sst-2-english",
-                device=-1  # Force to CPU as fallback
-            )
+class CaregiverChatbot:
+    def __init__(self, language="en", device=-1, tone="soft"):
+        self.language = language
+        self.device = device
+        self.tone = tone
+
         # Initialize the model and tokenizer
         try:
             model_name = "gpt2"  # Change to your model's name if needed
@@ -114,4 +95,3 @@ class CaregiverChatbot:
                 return "📋 Here are your scheduled care tasks. Please check the section below."
             else:
                 return "🛠️ What would you like to work on next? You’ve got this — and I’ve got your back."
-
