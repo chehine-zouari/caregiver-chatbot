@@ -4,6 +4,7 @@ from caregiver_chatbot import CaregiverChatbot
 import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
+import base64
 
 # Set page configuration (Title and Icon)
 st.set_page_config(page_title="Caregiver AI Support", page_icon="🤖")
@@ -40,7 +41,6 @@ user_input = st.text_input("You:", "")
 # Handling send button click
 if st.button("Send"):
     if user_input:
-        from datetime import datetime
         response = chatbot.process_message(user_input)
         st.session_state.chat_history.append(("You", user_input, datetime.now()))
         st.session_state.chat_history.append(("Bot", response, datetime.now()))
@@ -111,6 +111,20 @@ if st.sidebar.button("➕ Add Task"):
         st.sidebar.success("✅ Task added successfully!")
     else:
         st.sidebar.warning("Please enter a task description.")
+
+# Export Chat History as CSV
+if st.sidebar.button("⬇️ Export Chat History"):
+    if st.session_state.chat_history:
+        df_chat = pd.DataFrame(
+            [(speaker, message, timestamp.strftime("%Y-%m-%d %H:%M:%S")) for speaker, message, timestamp in st.session_state.chat_history],
+            columns=["Speaker", "Message", "Timestamp"]
+        )
+        csv = df_chat.to_csv(index=False).encode('utf-8')
+        b64 = base64.b64encode(csv).decode()
+        href = f'<a href="data:file/csv;base64,{b64}" download="chat_history.csv">📥 Download CSV</a>'
+        st.sidebar.markdown(href, unsafe_allow_html=True)
+    else:
+        st.sidebar.warning("No chat history available to export.")
 
 for speaker, message, *_ in st.session_state.chat_history:
     st.markdown(f"**{speaker}:** {message}")
