@@ -9,3 +9,4 @@ flask
 langdetect
 googletrans
 openai
+base64
