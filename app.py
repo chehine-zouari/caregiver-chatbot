@@ -8,28 +8,16 @@ st.set_page_config(page_title="Caregiver AI Support", page_icon="🤖")
 def inject_custom_background():
    st.markdown("""
     <style>
-    html, body, [data-testid="stAppViewContainer"], .stApp {
-        background: linear-gradient(270deg, #e0c3fc, #8ec5fc, #f3e5f5);
-        background-size: 600% 600%;
-        animation: gradientBG 20s ease infinite !important;
-        color: white;
+    body {
+        background: linear-gradient(135deg, #e0f7fa, #e8eaf6, #f3e5f5, #e8f5e9);
+        background-attachment: fixed;
     }
-
-    @keyframes gradientBG {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-
-    /* Optional: make widgets semi-transparent */
-    .block-container {
-        background-color: rgba(255, 255, 255, 0.1) !important;
-        padding: 2rem;
-        border-radius: 1rem;
+    .stApp {
+        background: linear-gradient(135deg, #e0f7fa, #e8eaf6, #f3e5f5, #e8f5e9);
+        background-attachment: fixed;
     }
     </style>
 """, unsafe_allow_html=True)
-
 
 inject_custom_background()
 
