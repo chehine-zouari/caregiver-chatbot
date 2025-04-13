@@ -8,11 +8,11 @@ st.set_page_config(page_title="Caregiver AI Support", page_icon="🤖")
 def inject_custom_background():
    st.markdown("""
     <style>
-    /* Full page background with animated gradient */
-    body {
+    html, body, [data-testid="stAppViewContainer"], .stApp {
         background: linear-gradient(270deg, #e0c3fc, #8ec5fc, #f3e5f5);
         background-size: 600% 600%;
-        animation: gradientBG 20s ease infinite;
+        animation: gradientBG 20s ease infinite !important;
+        color: white;
     }
 
     @keyframes gradientBG {
@@ -21,23 +21,13 @@ def inject_custom_background():
         100% { background-position: 0% 50%; }
     }
 
-    /* Streamlit's main block override */
-    .stApp {
-        background-color: transparent;
-    }
-
-    /* Optional: Add magical sparkles */
-    .sparkles {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background: url('https://cdn.jsdelivr.net/gh/JulianNorton/pure-css-sparkles@main/sparkles.gif') repeat;
-        pointer-events: none;
-        z-index: 0;
-        opacity: 0.3;
+    /* Optional: make widgets semi-transparent */
+    .block-container {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        padding: 2rem;
+        border-radius: 1rem;
     }
     </style>
-    <div class="sparkles"></div>
 """, unsafe_allow_html=True)
 
 
