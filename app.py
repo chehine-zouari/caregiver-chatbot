@@ -37,7 +37,7 @@ def load_audio_base64(file_path):
         return None
 
 # Load the audio file
-encoded_music = load_audio_base64("magic_theme.mp3")  # Make sure the file is in the correct folder
+encoded_music = load_audio_base64("magical.mp4")  # Make sure the file is in the correct folder
 
 if encoded_music:
     # Embed the audio using HTML (base64)
