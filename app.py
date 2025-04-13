@@ -362,18 +362,17 @@ else:
 
 
 
-# Real resources list (videos + articles)
+# resources list (videos + articles)
 resources = [
-    {"title": "Caring for Children with Special Needs (Video)", "link": "https://www.youtube.com/watch?v=ZNC8z07A0zc", "type": "Video"},
-    {"title": "Caring for Children with Disabilities: A Caregiver’s Guide (Video)", "link": "https://www.youtube.com/watch?v=3kg0EwxVf-I", "type": "Video"},
-    {"title": "Managing Stress as a Caregiver (Article)", "link": "https://www.caregiver.org/infographic/managing-stress-as-a-caregiver/", "type": "Article"},
-    {"title": "Raising a Child with Medical Complexity (Article)", "link": "https://www.verywellfamily.com/raising-a-child-with-complex-medical-needs-5195921", "type": "Article"},
-    {"title": "Caring for Children with Disabilities (Article)", "link": "https://www.nichd.nih.gov/health/topics/special-needs/conditioninfo/care", "type": "Article"},
-    {"title": "Supporting Your Child’s Emotional Needs (Video)", "link": "https://www.youtube.com/watch?v=Gz2yT1M7z6g", "type": "Video"},
-    {"title": "Caregiver Self-Care Tips (Article)", "link": "https://www.caregiver.org/caregiver-self-care-tips", "type": "Article"},
-    {"title": "Managing Caregiver Burnout (Video)", "link": "https://www.youtube.com/watch?v=Q6oe49rCgE4", "type": "Video"},
-    {"title": "Caring for Your Child's Medical Needs: A Guide for Parents (Article)", "link": "https://www.caregiving.org/children-with-medical-needs/", "type": "Article"},
-    {"title": "Self-Care for Family Caregivers (Article)", "link": "https://www.caregiver.org/self-care-for-family-caregivers-of-children-with-disabilities", "type": "Article"}
+    {"title": "Caring for Children with Special Needs", "link": "https://youtu.be/zcxGo6JXqRg", "type": "Video"},
+    {"title": "Caring for Children with Disabilities: A Caregiver’s Guide", "link": "https://youtu.be/cLoj-K8BGQA", "type": "Video"},
+    {"title": "Managing Stress as a Caregiver", "link": "https://www.caringbridge.org/resources/techniques-to-relieve-caregiver-stress", "type": "Article"},
+    {"title": "Raising a Child with Medical Complexity", "link": "https://blog.cincinnatichildrens.org/rare-and-complex-conditions/caring-for-a-medically-complex-child-your-resource-checklist/", "type": "Article"},
+    {"title": "Supporting Your Child’s Emotional Needs", "link": "https://youtu.be/nmqdQK3uPmg", "type": "Video"},
+    {"title": "Caregiver Self-Care Tips", "link": "https://www.nia.nih.gov/health/caregiving/taking-care-yourself-tips-caregivers", "type": "Article"},
+    {"title": "Managing Caregiver Burnout", "link": "Managing Caregiver Burnout", "type": "Video"},
+    {"title": "Caring for Your Child's Medical Needs: A Guide for Parents", "link": "https://childrenfirst.com/quality-care-for-your-child-with-complex-medical-needs/", "type": "Article"},
+    {"title": "Self-Care for Family Caregivers", "link": "https://www.caregiver.org/resource/taking-care-you-self-care-family-caregivers/", "type": "Article"}
 ]
 
 # Display the title and introduction
