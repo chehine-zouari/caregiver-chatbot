@@ -31,18 +31,23 @@ def load_audio_base64(file_path):
         data = f.read()
     return base64.b64encode(data).decode()
 
-audio_path = "magical.mp4"  # your uploaded file name
+audio_path = "magical.mp4"
+
+# ✨ Header Title
+st.markdown('<div class="main-title">🌠 Magical Soothing Music</div>', unsafe_allow_html=True)
 
 if os.path.exists(audio_path):
     encoded_audio = load_audio_base64(audio_path)
-    
-    # Embed audio player (with play/pause)
+
+    # 🎶 Pretty Audio Player
     st.markdown(
         f"""
-        <audio controls autoplay loop style="width: 100%;">
-            <source src="data:audio/mp4;base64,{encoded_audio}" type="audio/mp4">
-            Your browser does not support the audio element.
-        </audio>
+        <div class="audio-player">
+            <audio controls autoplay loop style="width: 100%; border-radius: 10px;">
+                <source src="data:audio/mp4;base64,{encoded_audio}" type="audio/mp4">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
         """,
         unsafe_allow_html=True
     )
