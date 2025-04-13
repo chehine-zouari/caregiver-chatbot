@@ -364,16 +364,31 @@ else:
 
 # Real resources list (videos + articles)
 resources = [
-    {"title": "How to Manage Caregiver Stress (Video)", "link": "https://www.youtube.com/watch?v=7P5r5JznzTY", "type": "Video"},
-    {"title": "Caring for Someone with Alzheimer's (Article)", "link": "https://www.alz.org/help-support/caregiving", "type": "Article"},
-    {"title": "Self-Care for Family Caregivers (Video)", "link": "https://www.youtube.com/watch?v=4PBnbvH6Oos", "type": "Video"},
-    {"title": "Stress Relief Tips for Caregivers (Article)", "link": "https://www.caregiver.org/caregiver-stress-relief", "type": "Article"},
-    {"title": "Mindfulness for Caregivers (Video)", "link": "https://www.youtube.com/watch?v=U1yFj7gVY5Y", "type": "Video"},
-    {"title": "Caring for a Person with Dementia (Article)", "link": "https://www.caregiver.org/caring-for-someone-with-dementia", "type": "Article"},
-    {"title": "Exercise Tips for Caregivers (Video)", "link": "https://www.youtube.com/watch?v=5J5vayhZfCA", "type": "Video"},
-    {"title": "Caregiver Support Groups (Article)", "link": "https://www.alz.org/get-support/online-support-groups", "type": "Article"},
-    {"title": "Mental Health for Caregivers (Article)", "link": "https://www.caregiver.org/mental-health-for-caregivers", "type": "Article"},
-    {"title": "Caregiving During COVID-19 (Video)", "link": "https://www.youtube.com/watch?v=1YmJ7QokF0E", "type": "Video"}
+    {"title": "Caregiving for Children with Medical Complexity (Article)", "link": "https://www.caregiving.org/caring-for-children-with-medical-complexity/", "type": "Article"},
+    {"title": "Caring for Children with Disabilities: A Caregiver’s Guide (Video)", "link": "https://www.youtube.com/watch?v=TYCsyLq0c0k", "type": "Video"},
+    {"title": "Caring for Children with Special Needs (Article)", "link": "https://www.nichd.nih.gov/health/topics/special-needs/conditioninfo/care", "type": "Article"},
+    {"title": "Mental Health and Caregiving for Children with Medical Complexity (Video)", "link": "https://www.youtube.com/watch?v=4nGj9XfbKc4", "type": "Video"},
+    {"title": "Self-Care for Caregivers of Children with Disabilities (Article)", "link": "https://www.caregiver.org/self-care-for-family-caregivers-of-children-with-disabilities", "type": "Article"},
+    {"title": "Caregiver Stress and Managing Mental Health (Video)", "link": "https://www.youtube.com/watch?v=J99cHDldP74", "type": "Video"},
+    {"title": "Resources for Families of Children with Complex Medical Needs (Article)", "link": "https://www.hopkinsmedicine.org/health/conditions-and-diseases/resources-for-families-of-children-with-complex-medical-needs", "type": "Article"},
+    {"title": "Caring for a Child with Special Needs: Tips for Parents (Video)", "link": "https://www.youtube.com/watch?v=ogfQ5iXY5rY", "type": "Video"},
+    {"title": "Raising a Child with Medical Complexity: Tips and Resources (Article)", "link": "https://www.verywellfamily.com/raising-a-child-with-complex-medical-needs-5195921", "type": "Article"},
+    {"title": "Navigating Special Education Services for Children with Disabilities (Video)", "link": "https://www.youtube.com/watch?v=XB3k73D5uF4", "type": "Video"}
+]
+
+# Display the title and introduction
+st.title("Caregiver AI Support")# Real resources list (videos + articles)
+resources = [
+    {"title": "Caregiving for Children with Medical Complexity (Article)", "link": "https://www.caregiving.org/caring-for-children-with-medical-complexity/", "type": "Article"},
+    {"title": "Caring for Children with Disabilities: A Caregiver’s Guide (Video)", "link": "https://www.youtube.com/watch?v=TYCsyLq0c0k", "type": "Video"},
+    {"title": "Caring for Children with Special Needs (Article)", "link": "https://www.nichd.nih.gov/health/topics/special-needs/conditioninfo/care", "type": "Article"},
+    {"title": "Mental Health and Caregiving for Children with Medical Complexity (Video)", "link": "https://www.youtube.com/watch?v=4nGj9XfbKc4", "type": "Video"},
+    {"title": "Self-Care for Caregivers of Children with Disabilities (Article)", "link": "https://www.caregiver.org/self-care-for-family-caregivers-of-children-with-disabilities", "type": "Article"},
+    {"title": "Caregiver Stress and Managing Mental Health (Video)", "link": "https://www.youtube.com/watch?v=J99cHDldP74", "type": "Video"},
+    {"title": "Resources for Families of Children with Complex Medical Needs (Article)", "link": "https://www.hopkinsmedicine.org/health/conditions-and-diseases/resources-for-families-of-children-with-complex-medical-needs", "type": "Article"},
+    {"title": "Caring for a Child with Special Needs: Tips for Parents (Video)", "link": "https://www.youtube.com/watch?v=ogfQ5iXY5rY", "type": "Video"},
+    {"title": "Raising a Child with Medical Complexity: Tips and Resources (Article)", "link": "https://www.verywellfamily.com/raising-a-child-with-complex-medical-needs-5195921", "type": "Article"},
+    {"title": "Navigating Special Education Services for Children with Disabilities (Video)", "link": "https://www.youtube.com/watch?v=XB3k73D5uF4", "type": "Video"}
 ]
 
 # Display the title and introduction
@@ -394,6 +409,25 @@ for resource in filtered_resources:
 
 # Emotional Support Resources Section
 st.write("### Emotional Support Resources")
-st.write("Here are some helpful resources for caregivers:")
+st.write("Here are some helpful resources for caregivers of children with medical complexity:")
+for resource in resources:
+    st.markdown(f"- [{resource['title']}]({resource['link']}) ({resource['type']})")
+st.write("Welcome to the Caregiver Support Chatbot. Explore resources to help you manage caregiving tasks and improve your well-being.")
+
+# Search function for resources
+st.sidebar.title("Search Resources")
+search_query = st.sidebar.text_input("Search for a topic...", "")
+
+# Filter resources based on the search query
+filtered_resources = [resource for resource in resources if search_query.lower() in resource["title"].lower()]
+
+# Display the filtered resources
+st.sidebar.write("### Resources")
+for resource in filtered_resources:
+    st.sidebar.markdown(f"- [{resource['title']}]({resource['link']}) ({resource['type']})")
+
+# Emotional Support Resources Section
+st.write("### Emotional Support Resources")
+st.write("Here are some helpful resources for caregivers of children with medical complexity:")
 for resource in resources:
     st.markdown(f"- [{resource['title']}]({resource['link']}) ({resource['type']})")
