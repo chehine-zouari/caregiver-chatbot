@@ -12,3 +12,4 @@ openai
 gTTS
 pydub
 pyaudio
+soundfile
