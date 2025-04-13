@@ -4,12 +4,6 @@ import os
 import streamlit.components.v1 as components
 import random
 import time
-from gtts import gTTS
-from pydub import AudioSegment
-import io
-import sys
-import subprocess
-from io import BytesIO
 
 # ------------------ PAGE CONFIG -------------------
 # This must be the very first Streamlit command
@@ -406,33 +400,3 @@ st.write("Here are some helpful resources for caregivers of children with medica
 for resource in resources:
     st.markdown(f"- [{resource['title']}]({resource['link']}) ({resource['type']})")
 
-
-# Function to play the story using gTTS (Text-to-Speech)
-def play_story(story_text):
-    tts = gTTS(text=story_text, lang='en')
-    story_audio = BytesIO()
-    tts.save(story_audio)
-    story_audio.seek(0)
-
-    # Use pydub to load the audio and convert it to a format that Streamlit can handle
-    audio = AudioSegment.from_mp3(story_audio)
-    audio.export(story_audio, format="wav")
-    story_audio.seek(0)
-
-    # Return the audio file to Streamlit
-    return story_audio
-
-# Streamlit UI elements
-st.title("Caregiver Chatbot with Story Mode")
-
-# Option for the user to read a story
-story = """
-Once upon a time, in a land far, far away, there lived a brave knight named Sir Chatbot. Sir Chatbot had a magic sword that could answer any question, and he used it to help the people of his kingdom.
-"""
-
-if st.button("Read Me a Story"):
-    st.write(story)
-    audio_file = play_story(story)
-    
-    # Allow the user to play the audio file
-    st.audio(audio_file, format="audio/wav")
