@@ -64,17 +64,21 @@ if st.button("📅 Appointment reminder"):
 
 # Helper: convert sentiment scores to DataFrame
 def get_mood_df(history):
-    timestamps = [entry[2] for entry in history if entry[0] == 'You']  # Assuming entry = (sender, msg, timestamp)
-    scores = [chatbot.analyze_sentiment(entry[1])['score'] for entry in history if entry[0] == 'You']
+    timestamps = []
+    scores = []
+
+    for entry in history:
+        if entry[0] == 'You' and len(entry) >= 3:
+            timestamps.append(entry[2])
+            scores.append(chatbot.analyze_sentiment(entry[1])['score'])
 
     # Debugging output
-    print("Number of timestamps:", len(timestamps))
-    print("Number of scores:", len(scores))
+    print("Timestamps collected:", len(timestamps))
+    print("Scores collected:", len(scores))
 
-    # Optional quick fix: trim to shortest length
-    min_len = min(len(timestamps), len(scores))
-    timestamps = timestamps[:min_len]
-    scores = scores[:min_len]
+    # Optional: handle case where no valid entries are found
+    if not timestamps or not scores:
+        return pd.DataFrame({'Time': [], 'Mood Score': []})
 
     return pd.DataFrame({'Time': timestamps, 'Mood Score': scores})
 
