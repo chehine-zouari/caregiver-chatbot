@@ -2,8 +2,8 @@ import streamlit as st
 from PIL import Image
 from caregiver_chatbot import CaregiverChatbot
 import pandas as pd
-import matplotlib.pyplot as plt
 from datetime import datetime
+from deep_translator import GoogleTranslator  # Use deep_translator for translation
 
 # Set page configuration (Title and Icon)
 st.set_page_config(page_title="Caregiver AI Support", page_icon="🤖")
@@ -24,15 +24,39 @@ with col2:
     st.markdown("## 🤖 Digital Care Companion 🤖")
     st.markdown("**Empowering caregivers of children with medical complexity through AI.**")
 
-# Allow the user to choose the tone before starting the conversation
-tone_choice = st.selectbox("Choose your support style:", ["Soft", "Directive"])
+# Language selection dropdown
+language_choice = st.selectbox("Choose your language:", [
+    "English", "Mandarin Chinese", "Hindi", "Spanish", "French", "Standard Arabic", "Bengali", "Portuguese", "Russian", "Urdu"
+])
 
-# Initialize the chatbot with the chosen tone
-chatbot = CaregiverChatbot(tone=tone_choice.lower())
+# Mapping languages to codes for translation
+language_mapping = {
+    "English": "en",
+    "Mandarin Chinese": "zh",
+    "Hindi": "hi",
+    "Spanish": "es",
+    "French": "fr",
+    "Standard Arabic": "ar",
+    "Bengali": "bn",
+    "Portuguese": "pt",
+    "Russian": "ru",
+    "Urdu": "ur"
+}
+
+# Initialize chatbot with chosen language
+chatbot = CaregiverChatbot(tone="soft")
 
 # Initialize chat history if not already present
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
+
+# Function to translate messages
+def translate_message(message, target_language):
+    return GoogleTranslator(source='auto', target=target_language).translate(message)
+
+# Function to translate the chatbot's response
+def translate_response(response, target_language):
+    return GoogleTranslator(source='auto', target=target_language).translate(response)
 
 # User input area
 user_input = st.text_input("You:", "")
@@ -40,26 +64,38 @@ user_input = st.text_input("You:", "")
 # Handling send button click
 if st.button("Send"):
     if user_input:
-        response = chatbot.process_message(user_input)
+        # Translate user input to English before passing it to the chatbot
+        translated_input = translate_message(user_input, 'en')
+        
+        # Get the response from the chatbot (in English)
+        response = chatbot.process_message(translated_input)
+        
+        # Translate the chatbot's response back to the selected language
+        translated_response = translate_response(response, language_mapping[language_choice])
+
+        # Store the conversation in session state with timestamp
         st.session_state.chat_history.append(("You", user_input, datetime.now()))
-        st.session_state.chat_history.append(("Bot", response, datetime.now()))
+        st.session_state.chat_history.append(("Bot", translated_response, datetime.now()))
 
 # Provide quick support topic buttons
 st.markdown("#### Or select a quick support topic:")
 if st.button("💖 Emotional support"):
     response = chatbot.process_message("I feel overwhelmed")
+    translated_response = translate_response(response, language_mapping[language_choice])
     st.session_state.chat_history.append(("You", "I feel overwhelmed", datetime.now()))
-    st.session_state.chat_history.append(("Bot", response, datetime.now()))
+    st.session_state.chat_history.append(("Bot", translated_response, datetime.now()))
 
 if st.button("💊 Medication help"):
     response = chatbot.process_message("I need help with medication")
+    translated_response = translate_response(response, language_mapping[language_choice])
     st.session_state.chat_history.append(("You", "I need help with medication", datetime.now()))
-    st.session_state.chat_history.append(("Bot", response, datetime.now()))
+    st.session_state.chat_history.append(("Bot", translated_response, datetime.now()))
 
 if st.button("📅 Appointment reminder"):
     response = chatbot.process_message("Help me manage appointments")
+    translated_response = translate_response(response, language_mapping[language_choice])
     st.session_state.chat_history.append(("You", "Help me manage appointments", datetime.now()))
-    st.session_state.chat_history.append(("Bot", response, datetime.now()))
+    st.session_state.chat_history.append(("Bot", translated_response, datetime.now()))
 
 # Helper: convert sentiment scores to DataFrame
 def get_mood_df(history):
@@ -70,10 +106,6 @@ def get_mood_df(history):
         if entry[0] == 'You' and len(entry) >= 3:
             timestamps.append(entry[2])
             scores.append(chatbot.analyze_sentiment(entry[1])['score'])
-
-    # Debugging output
-    print("Timestamps collected:", len(timestamps))
-    print("Scores collected:", len(scores))
 
     # Optional: handle case where no valid entries are found
     if not timestamps or not scores:
