@@ -4,7 +4,6 @@ import os
 import streamlit.components.v1 as components
 import random
 import time
-from wordsearch import WordSearch
 
 # ------------------ PAGE CONFIG -------------------
 # This must be the very first Streamlit command
@@ -265,12 +264,7 @@ affirmations = [
 st.title("Caregiver Emotional Support Games")
 
 # Options for games/activities
-activity = st.selectbox("Choose an activity", ("Word Search", "Journaling", "Breathing Exercise", "Positive Affirmation"))
-
-if activity == "Word Search":
-    st.subheader("Word Search Game")
-    puzzle = generate_word_search()
-    st.text(puzzle)
+activity = st.selectbox("Choose an activity", ("Journaling", "Breathing Exercise", "Positive Affirmation"))
 
 elif activity == "Journaling":
     st.subheader("Journaling Activity")
