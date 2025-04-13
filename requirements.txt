@@ -2,3 +2,4 @@ streamlit
 textblob
 Pillow
 matplotlib
+deep-translator
