@@ -26,69 +26,80 @@ inject_custom_background()
 
 # ------------------ MUSIC BACKGROUND -------------------
 
-# 🎵 Load and Encode Audio File
-def load_audio_base64(file_path):
+# 🎵 Music visualizer style
+st.markdown("""
+    <style>
+    .audio-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 30px;
+        gap: 6px;
+        cursor: pointer;
+    }
+    .bar {
+        width: 4px;
+        height: 10px;
+        background: #7e57c2;
+        animation: wave 1.2s infinite ease-in-out;
+    }
+    .bar:nth-child(2) {
+        animation-delay: -1.1s;
+    }
+    .bar:nth-child(3) {
+        animation-delay: -1s;
+    }
+    .bar:nth-child(4) {
+        animation-delay: -0.9s;
+    }
+    .bar:nth-child(5) {
+        animation-delay: -0.8s;
+    }
+    @keyframes wave {
+        0%, 100% {
+            transform: scaleY(0.3);
+        }
+        50% {
+            transform: scaleY(1);
+        }
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# 🎶 Load and encode audio
+def get_base64_audio(file_path):
     with open(file_path, "rb") as f:
         data = f.read()
     return base64.b64encode(data).decode()
 
-# Path to audio file
-audio_path = "magical.mp4"
+audio_base64 = get_base64_audio("magical.mp4")
 
-# Main title
-st.markdown('<div class="main-title">✨ Magical Vibes ✨</div>', unsafe_allow_html=True)
+# 🎚 Session toggle
+if "play_music" not in st.session_state:
+    st.session_state.play_music = False
 
-# 🎶 Inject HTML with Custom Visualizer-style Animation
-if os.path.exists(audio_path):
-    encoded_audio = load_audio_base64(audio_path)
+col1, col2 = st.columns([1, 1])
+with col1:
+    if st.button("🔈 Play Music"):
+        st.session_state.play_music = True
+with col2:
+    if st.button("🔇 Stop Music"):
+        st.session_state.play_music = False
 
-    components.html(f"""
-        <html>
-        <head>
-            <style>
-                .wave-container {{
-                    display: flex;
-                    justify-content: center;
-                    margin-top: 40px;
-                }}
-
-                .bar {{
-                    width: 5px;
-                    height: 20px;
-                    background: white;
-                    margin: 0 3px;
-                    animation: pulse 1s infinite ease-in-out;
-                }}
-
-                .bar:nth-child(2) {{ animation-delay: 0.1s; }}
-                .bar:nth-child(3) {{ animation-delay: 0.2s; }}
-                .bar:nth-child(4) {{ animation-delay: 0.3s; }}
-                .bar:nth-child(5) {{ animation-delay: 0.4s; }}
-
-                @keyframes pulse {{
-                    0%, 100% {{ transform: scaleY(0.5); }}
-                    50% {{ transform: scaleY(1.5); }}
-                }}
-            </style>
-        </head>
-        <body>
-            <audio id="audioPlayer" autoplay loop>
-                <source src="data:audio/mp4;base64,{encoded_audio}" type="audio/mp4">
-                Your browser does not support the audio element.
-            </audio>
-
-            <div class="wave-container">
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-            </div>
-        </body>
-        </html>
-    """, height=150)
-else:
-    st.error("⚠️ The file 'magical.mp4' was not found. Please upload it to your project folder.")
+# 🔊 Embed music and animated visualizer if playing
+if st.session_state.play_music:
+    st.markdown(f"""
+    <audio id="bgmusic" autoplay loop>
+        <source src="data:audio/mp4;base64,{audio_base64}" type="audio/mp4">
+    </audio>
+    <div class="audio-button">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+    </div>
+    """, unsafe_allow_html=True)
 
 # ------------------ HEADER AND CONTENT -------------------
 from PIL import Image
