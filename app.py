@@ -83,7 +83,6 @@ if st.button("📅 Appointment reminder"):
     st.session_state.chat_history.append(("Bot", response, datetime.now()))
 
 # Helper: convert sentiment scores to DataFrame
-# Inside your get_mood_df function
 def get_mood_df(chat_history):
     moods = []
     scores = []
@@ -104,11 +103,17 @@ if st.sidebar.checkbox("📈 Show Mood Evolution Dashboard"):
     df = get_mood_df(st.session_state.chat_history)
     if not df.empty:
         st.subheader("Caregiver Mood Evolution Over Time")
-        st.line_chart(df.rename(columns={"Time": "index"}).set_index("index"))
+        
+        # Check if 'Time' column exists in the dataframe
+        if 'Time' in df.columns:
+            df = df.rename(columns={"Time": "index"})  # Rename 'Time' to 'index'
+            st.line_chart(df.set_index("index"))  # Set the 'index' column as the index and display the chart
+        else:
+            st.line_chart(df)  # If 'Time' column is missing, just display the mood evolution without renaming
+        
         st.caption("This chart shows how the caregiver's emotional tone has changed over time based on their messages.")
     else:
         st.write("No conversation history to show mood evolution.")
-
 
 # Care Tasks Tracker in Sidebar
 st.sidebar.markdown("## 📋 Care Tasks Tracker")
