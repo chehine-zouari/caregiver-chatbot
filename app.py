@@ -25,46 +25,29 @@ inject_custom_background()
 
 # ------------------ MUSIC BACKGROUND -------------------
 
-# 🎵 Load and Encode Magical Music (from mp4)
-def load_video_base64(file_path):
+# 🎵 Load and Embed Magical Music (MP4 used as audio)
+def load_audio_base64(file_path):
     with open(file_path, "rb") as f:
         data = f.read()
     return base64.b64encode(data).decode()
 
-video_file = "magical.mp4"
+audio_path = "magical.mp4"  # your uploaded file name
 
-if os.path.exists(video_file):
-    encoded_video = load_video_base64(video_file)
-
-    # Embed hidden video for music playback
+if os.path.exists(audio_path):
+    encoded_audio = load_audio_base64(audio_path)
+    
+    # Embed audio player (with play/pause)
     st.markdown(
         f"""
-        <video id="bgVideo" loop style="display: none;">
-            <source src="data:video/mp4;base64,{encoded_video}" type="video/mp4">
-        </video>
-        <script>
-            var video = document.getElementById("bgVideo");
-            function playVideo() {{
-                video.play();
-            }}
-            function pauseVideo() {{
-                video.pause();
-            }}
-        </script>
+        <audio controls autoplay loop style="width: 100%;">
+            <source src="data:audio/mp4;base64,{encoded_audio}" type="audio/mp4">
+            Your browser does not support the audio element.
+        </audio>
         """,
         unsafe_allow_html=True
     )
-
-    # UI: Music Control Buttons
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("🔊 Turn ON Music"):
-            st.markdown("<script>playVideo();</script>", unsafe_allow_html=True)
-    with col2:
-        if st.button("🔇 Turn OFF Music"):
-            st.markdown("<script>pauseVideo();</script>", unsafe_allow_html=True)
 else:
-    st.error("⚠️ 'magical.mp4' not found in your project folder.")
+    st.error("⚠️ The file 'magical.mp4' was not found. Please upload it to your project folder.")
 
 # ------------------ HEADER AND CONTENT -------------------
 from PIL import Image
