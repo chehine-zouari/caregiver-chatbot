@@ -25,48 +25,47 @@ inject_custom_background()
 
 # ------------------ MUSIC BACKGROUND -------------------
 
-# Function to encode the mp3 file
-def load_audio_base64(file_path):
+# Load audio from magical.mp4 (make sure it's in same dir)
+def load_video_base64(file_path):
     with open(file_path, "rb") as f:
-        audio_data = f.read()
-    return base64.b64encode(audio_data).decode()
+        data = f.read()
+    return base64.b64encode(data).decode()
 
-# Load the audio (make sure file exists)
-mp3_file = "magical.mp4"
-if os.path.exists(mp3_file):
-    encoded_audio = load_audio_base64(mp3_file)
+video_file = "magical.mp4"
+if os.path.exists(video_file):
+    encoded_video = load_video_base64(video_file)
 
-    # Inject audio tag
+    # Embed the hidden video player for audio purposes
     st.markdown(
         f"""
-        <audio id="myAudio" loop>
-            <source src="data:audio/mp3;base64,{encoded_audio}" type="audio/mp3">
-        </audio>
+        <video id="bgVideo" loop style="display:none;">
+            <source src="data:video/mp4;base64,{encoded_video}" type="video/mp4">
+        </video>
         <script>
-        const audio = document.getElementById("myAudio");
+        const video = document.getElementById("bgVideo");
 
-        function playAudio() {{
-            audio.play();
+        function playVideo() {{
+            video.play();
         }}
 
-        function pauseAudio() {{
-            audio.pause();
+        function pauseVideo() {{
+            video.pause();
         }}
         </script>
         """,
         unsafe_allow_html=True
     )
 
-    # Create buttons
+    # Play / Pause buttons
     col1, col2 = st.columns(2)
     with col1:
         if st.button("🔊 Turn ON Music"):
-            st.markdown("<script>playAudio();</script>", unsafe_allow_html=True)
+            st.markdown("<script>playVideo();</script>", unsafe_allow_html=True)
     with col2:
         if st.button("🔇 Turn OFF Music"):
-            st.markdown("<script>pauseAudio();</script>", unsafe_allow_html=True)
+            st.markdown("<script>pauseVideo();</script>", unsafe_allow_html=True)
 else:
-    st.error("⚠️ Music file not found. Please upload 'magic_theme.mp3' to the same directory.")
+    st.error("⚠️ 'magical.mp4' not found. Please upload it to the app directory.")
 
 # ------------------ HEADER AND CONTENT -------------------
 from PIL import Image
