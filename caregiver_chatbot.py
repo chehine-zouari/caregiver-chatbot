@@ -4,20 +4,28 @@ import torch
     
 class CaregiverChatbot:
     def __init__(self, language="en", device="cpu", tone="neutral"):
-        # Force CPU usage even if MPS (Apple GPU) is available
-        device = -1  # Default to CPU
+        # Explicitly check for available devices
         if torch.cuda.is_available():
-            device = 0  # If CUDA GPU is available and working, you can allow it
+            device = 0  # CUDA GPU
         elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
-            device = -1  # Explicitly force CPU if MPS is available but buggy
+            device = -1  # MPS GPU, but might not support all models
+        else:
+            device = -1  # Fallback to CPU
 
-        # Initialize sentiment analysis model
-        self.sentiment_analyzer = pipeline(
-            "sentiment-analysis",
-            model="distilbert-base-uncased-finetuned-sst-2-english",
-            device=device
-        )
-
+        # Initialize sentiment analysis pipeline with correct device handling
+        try:
+            self.sentiment_analyzer = pipeline(
+                "sentiment-analysis",
+                model="distilbert-base-uncased-finetuned-sst-2-english",
+                device=device
+            )
+        except NotImplementedError as e:
+            print(f"Error with device {device}: {e}. Falling back to CPU.")
+            self.sentiment_analyzer = pipeline(
+                "sentiment-analysis",
+                model="distilbert-base-uncased-finetuned-sst-2-english",
+                device=-1  # Force to CPU as fallback
+            )
         # Initialize the model and tokenizer
         try:
             model_name = "gpt2"  # Change to your model's name if needed
