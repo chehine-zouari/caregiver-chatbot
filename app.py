@@ -1,6 +1,5 @@
 import streamlit as st
 import base64
-import os
 
 # ------------------ PAGE CONFIG -------------------
 # This must be the very first Streamlit command
@@ -25,37 +24,43 @@ inject_custom_background()
 
 # ------------------ MUSIC BACKGROUND -------------------
 
-# Function to load audio file and convert it to base64
+# Function to load and encode the MP4
 def load_audio_base64(file_path):
-    try:
-        with open(file_path, "rb") as f:
-            audio_data = f.read()
-            encoded_audio = base64.b64encode(audio_data).decode("utf-8")
-        return encoded_audio
-    except FileNotFoundError:
-        st.error(f"Error: The file {file_path} was not found. Please ensure the file is in the correct location.")
-        return None
+    with open(file_path, "rb") as f:
+        audio_data = f.read()
+    return base64.b64encode(audio_data).decode()
 
-# Load the audio file (ensure the file exists in the correct path)
-encoded_music = load_audio_base64("magical.mp4")  # Adjust path if necessary
+# Load audio file
+encoded_music = load_audio_base64("magical.mp4")  # make sure this file exists
 
-if encoded_music:
-    # Embed the audio element in HTML
-    audio_html = f"""
-    <audio id="background-audio" autoplay loop>
-        <source src="data:audio/mp3;base64,{encoded_music}" type="audio/mp3">
-    </audio>
-    """
-    st.markdown(audio_html, unsafe_allow_html=True)
+# Inject HTML audio tag with JS controller
+audio_html = f"""
+<audio id="bg-music" loop>
+    <source src="data:audio/mp3;base64,{encoded_music}" type="audio/mp3">
+</audio>
 
-    # Add checkbox to control the audio
-    sound_on = st.checkbox("🎶 Turn sound on/off", value=True)
+<script>
+const audio = document.getElementById("bg-music");
 
-    # JavaScript to control audio muting based on checkbox
-    if sound_on:
-        st.markdown('<script>document.getElementById("background-audio").muted = false;</script>', unsafe_allow_html=True)
-    else:
-        st.markdown('<script>document.getElementById("background-audio").muted = true;</script>', unsafe_allow_html=True)
+function playAudio() {{
+    audio.play();
+}}
+
+function pauseAudio() {{
+    audio.pause();
+}}
+</script>
+"""
+st.markdown(audio_html, unsafe_allow_html=True)
+
+# UI Buttons to control the music
+col1, col2 = st.columns(2)
+with col1:
+    if st.button("🔊 Turn ON Music"):
+        st.markdown('<script>playAudio();</script>', unsafe_allow_html=True)
+with col2:
+    if st.button("🔇 Turn OFF Music"):
+        st.markdown('<script>pauseAudio();</script>', unsafe_allow_html=True)
 
 # ------------------ HEADER AND CONTENT -------------------
 from PIL import Image
