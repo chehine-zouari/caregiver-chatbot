@@ -1,5 +1,6 @@
 import streamlit as st
 import base64
+import os
 
 # ------------------ PAGE CONFIG -------------------
 # This must be the very first Streamlit command
@@ -23,27 +24,36 @@ def inject_custom_background():
 inject_custom_background()
 
 # ------------------ MUSIC BACKGROUND -------------------
-def load_audio_base64(file_path: str) -> str:
-    with open(file_path, "rb") as f:
-        audio_bytes = f.read()
-        return base64.b64encode(audio_bytes).decode()
 
-def toggle_audio(encoded_audio: str, play_audio: bool):
-    if play_audio:
-        audio_html = f"""
-            <audio autoplay loop>
-                <source src="data:audio/mp3;base64,{encoded_audio}" type="audio/mp3">
-            </audio>
-        """
-        st.markdown(audio_html, unsafe_allow_html=True)
+# Function to load audio file and convert it to base64
+def load_audio_base64(file_path):
+    try:
+        with open(file_path, "rb") as f:
+            audio_data = f.read()
+            encoded_audio = base64.b64encode(audio_data).decode("utf-8")
+        return encoded_audio
+    except FileNotFoundError:
+        st.error(f"Error: The file {file_path} was not found. Please ensure the file is in the correct location.")
+        return None
 
-# Checkbox to toggle music
-st.sidebar.markdown("🎵 **Magical Ambiance**")
-play_music = st.sidebar.checkbox("Play Background Music", value=True)
+# Load the audio file
+encoded_music = load_audio_base64("magic_theme.mp3")  # Make sure the file is in the correct folder
 
-# Load and toggle audio
-encoded_music = load_audio_base64("magic_theme.mp3")
-toggle_audio(encoded_music, play_music)
+if encoded_music:
+    # Embed the audio using HTML (base64)
+    audio_html = f"""
+    <audio id="background-audio" autoplay loop>
+        <source src="data:audio/mp3;base64,{encoded_music}" type="audio/mp3">
+    </audio>
+    """
+    st.markdown(audio_html, unsafe_allow_html=True)
+
+    # Option to toggle sound on/off
+    sound_on = st.checkbox("🎶 Turn sound on/off", value=True)
+    if not sound_on:
+        st.markdown('<script>document.getElementById("background-audio").muted = true;</script>', unsafe_allow_html=True)
+    else:
+        st.markdown('<script>document.getElementById("background-audio").muted = false;</script>', unsafe_allow_html=True)
 
 # ------------------ HEADER AND CONTENT -------------------
 from PIL import Image
