@@ -294,3 +294,46 @@ elif activity == "Positive Affirmation":
     st.subheader("Get a Positive Affirmation")
     if st.button("Get Affirmation"):
         st.write(random.choice(affirmations))
+
+
+
+# Initialize session state variables to track progress
+if 'points' not in st.session_state:
+    st.session_state.points = 0
+    st.session_state.badges = []
+
+# List of tasks
+tasks = {
+    "Caregiving Tasks": 10,  # 10 points for caregiving tasks
+    "Wellness Activity": 5,   # 5 points for wellness activity
+    "Daily Journal": 3,       # 3 points for journaling
+}
+
+# Function to add points and badges
+def complete_task(task):
+    st.session_state.points += tasks[task]
+    st.session_state.badges.append(task)
+    st.success(f"Task '{task}' completed! You've earned {tasks[task]} points.")
+
+# Display tasks
+st.title("Caregiver Progress Tracker")
+st.subheader("Track your caregiving activities and earn rewards!")
+
+for task, points in tasks.items():
+    if st.button(f"Complete '{task}'"):
+        complete_task(task)
+
+# Display total points
+st.subheader(f"Total Points: {st.session_state.points}")
+
+# Display badges earned
+if len(st.session_state.badges) > 0:
+    st.subheader("Badges Earned:")
+    for badge in st.session_state.badges:
+        st.write(f"🏅 {badge}")
+else:
+    st.write("No badges earned yet. Start completing tasks!")
+
+# Optional: Add a progress bar for a more visual representation
+progress = (st.session_state.points / sum(tasks.values())) * 100
+st.progress(progress)
