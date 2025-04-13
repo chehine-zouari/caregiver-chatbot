@@ -1,13 +1,22 @@
 from transformers import pipeline
+from langdetect import detect
+from googletrans import Translator  # Or another translation library
 
 class CaregiverChatbot:
-    def __init__(self, tone="soft"):
+    def __init__(self, tone="soft", language="en"):
         self.tone = tone  # Can be 'soft' or 'directive'
+        self.language = language  # Default language is English
         self.sentiment_analyzer = pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment")
+        self.translator = Translator()
 
     def set_tone(self, tone):
+        """Set the tone to 'soft' or 'directive'."""
         if tone in ["soft", "directive"]:
             self.tone = tone
+
+    def set_language(self, lang_code):
+        """Set the desired language."""
+        self.language = lang_code
 
     def analyze_sentiment(self, message):
         """Analyze the sentiment using BERT."""
@@ -18,11 +27,18 @@ class CaregiverChatbot:
         return {"score": normalized_score, "label": label}
 
     def detect_keywords(self, message, keywords):
+        """Detect keywords in the message."""
         return any(keyword in message.lower() for keyword in keywords)
 
     def process_message(self, message):
+        """Process the message and return a response in the selected language."""
+        # Detect language if not set by the user
+        if self.language == "auto":
+            self.language = detect(message)  # Auto-detect the language
+
         message = message.lower()
 
+        # Emotion keywords and responses
         emotion_keywords = {
             "overwhelmed": ["overwhelmed", "tired", "stress"],
             "medication": ["medication", "pill"],
@@ -37,14 +53,17 @@ class CaregiverChatbot:
 
         for emotion, keywords in emotion_keywords.items():
             if self.detect_keywords(message, keywords):
-                return self._generate_response(emotion)
+                response = self._generate_response(emotion)
+                return self.translate_response(response)
 
-        return self._generate_response("default")
+        # Default response if no specific emotion detected
+        return self.translate_response(self._generate_response("default"))
 
     def _generate_response(self, emotion):
+        """Generate a response based on the emotion detected and tone."""
         soft_responses = {
             "overwhelmed": "😔 Hmm... that sounds really tough. Caregiving can be so exhausting sometimes. You're doing your best, and that's more than enough. I'm here for you 💛",
-            "medication": "💊 Got it. Medication can be tricky, right? Do you need help keeping track of doses or timing? I'm here to help you sort it out 👍",
+            "medication": "💊 Got it. Medication can be tricky, right? Do you need help keeping track of doses or timing? I'm here to help sort it out 👍",
             "appointment": "📅 Of course! I can help with that. Would you like me to set up a gentle reminder for upcoming appointments? 😊",
             "lonely": "💙 Ouch... loneliness is hard. Just know you’re not alone right now. I'm right here with you. Want to talk a little more? 🫂",
             "angry": "😤 Ugh, I get that. It’s completely okay to feel frustrated. Want to vent a bit? I’m here to listen.",
@@ -69,3 +88,10 @@ class CaregiverChatbot:
         }
 
         return soft_responses[emotion] if self.tone == "soft" else directive_responses[emotion]
+
+    def translate_response(self, response):
+        """Translate the response to the desired language."""
+        if self.language != "en":
+            translated = self.translator.translate(response, src="en", dest=self.language).text
+            return translated
+        return response
