@@ -302,7 +302,7 @@ if 'points' not in st.session_state:
     st.session_state.points = 0
     st.session_state.badges = []
 
-# List of tasks
+# List of tasks and their associated points
 tasks = {
     "Caregiving Tasks": 10,  # 10 points for caregiving tasks
     "Wellness Activity": 5,   # 5 points for wellness activity
@@ -319,6 +319,7 @@ def complete_task(task):
 st.title("Caregiver Progress Tracker")
 st.subheader("Track your caregiving activities and earn rewards!")
 
+# Complete tasks by clicking the button
 for task, points in tasks.items():
     if st.button(f"Complete '{task}'"):
         complete_task(task)
@@ -335,5 +336,7 @@ else:
     st.write("No badges earned yet. Start completing tasks!")
 
 # Optional: Add a progress bar for a more visual representation
+# Ensure the progress is between 0 and 100
 progress = (st.session_state.points / sum(tasks.values())) * 100
+progress = min(max(progress, 0), 100)  # Make sure progress is between 0 and 100
 st.progress(progress)
