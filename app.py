@@ -1,16 +1,11 @@
 import streamlit as st
 from PIL import Image
-from caregiver_chatbot import CaregiverChatbot
+from caregiver_chatbot_class import CaregiverChatbot  # Importing the CaregiverChatbot class from the other file
 import pandas as pd
-import matplotlib.pyplot as plt
 from datetime import datetime
 import base64
 from langdetect import detect
-
-def initialize_chatbot():
-    from caregiver_chatbot import CaregiverChatbot
-    chatbot = CaregiverChatbot(language='en')
-    return chatbot
+import torch  # Import torch to check if GPU is available
 
 # Set page configuration (Title and Icon)
 st.set_page_config(page_title="Caregiver AI Support", page_icon="🤖")
@@ -32,20 +27,16 @@ with col2:
     st.markdown("**Empowering caregivers of children with medical complexity through AI.**")
 
 # Language selection menu
-language_choice = st.sidebar.selectbox(
+language_choice = st.selectbox(
     "Choose your language:",
     ["English", "Mandarin Chinese", "Hindi", "Spanish", "French", "Standard Arabic", "Bengali", "Portuguese", "Russian", "Urdu"]
 )
 
-# Tone selection menu
-tone_choice = st.sidebar.selectbox(
-    "Choose tone:",
-    ["soft", "directive"]
-)
+# Check if GPU is available, otherwise use CPU
+device = 0 if torch.cuda.is_available() else -1  # Use GPU if available, otherwise use CPU
 
-# Initialize the chatbot with the selected language and tone
-chatbot = CaregiverChatbot(language=language_choice.lower())
-chatbot.set_tone(tone_choice)
+# Initialize the chatbot with the selected language
+chatbot = CaregiverChatbot(language=language_choice.lower(), device=device)
 
 # Initialize chat history if not already present
 if "chat_history" not in st.session_state:
@@ -96,7 +87,8 @@ def get_mood_df(history):
     for entry in history:
         if entry[0] == 'You' and len(entry) >= 3:
             timestamps.append(entry[2])
-            scores.append(chatbot.analyze_sentiment(entry[1])['score'])
+            sentiment_result = chatbot.analyze_sentiment(entry[1])
+            scores.append(sentiment_result['score'] if sentiment_result else 0)
 
     if not timestamps or not scores:
         return pd.DataFrame({'Time': [], 'Mood Score': []})
@@ -151,9 +143,11 @@ if st.sidebar.button("⬇️ Export Chat History"):
     else:
         st.sidebar.warning("No chat history available to export.")
 
+# Display the chat history in the main area
 for speaker, message, *_ in st.session_state.chat_history:
     st.markdown(f"**{speaker}:** {message}")
 
+# Show scheduled care tasks
 if st.checkbox("📋 Show Care Tasks"):
     st.subheader("Scheduled Care Tasks")
     if st.session_state.tasks:
