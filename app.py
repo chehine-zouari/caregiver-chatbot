@@ -400,3 +400,55 @@ st.write("Here are some helpful resources for caregivers of children with medica
 for resource in resources:
     st.markdown(f"- [{resource['title']}]({resource['link']}) ({resource['type']})")
 
+
+
+import subprocess
+import sys
+
+# Function to install packages if not already installed
+def install_package(package):
+    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+
+# Install required packages if they aren't installed already
+try:
+    import gtts
+except ImportError:
+    install_package('gTTS')
+
+try:
+    import pydub
+except ImportError:
+    install_package('pydub')
+
+try:
+    import pyaudio
+except ImportError:
+    install_package('pyaudio')
+
+# Now import Streamlit and other necessary libraries
+import streamlit as st
+from gtts import gTTS
+from pydub import AudioSegment
+import io
+
+# Function to generate text-to-speech
+def speak_text(text):
+    tts = gTTS(text=text, lang='en')
+    audio_file = io.BytesIO()
+    tts.save(audio_file)
+    audio_file.seek(0)
+    return audio_file
+
+# Streamlit interface
+st.title("Chatbot with Text-to-Speech")
+
+# User input for chatbot
+user_input = st.text_input("Say something to the chatbot:")
+
+if user_input:
+    st.write(f"You said: {user_input}")
+    
+    # Convert user input to speech and play the audio
+    audio = speak_text(user_input)
+    st.audio(audio, format="audio/mp3")
+
