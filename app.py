@@ -24,6 +24,7 @@ def inject_custom_background():
 inject_custom_background()
 
 # ------------------ MUSIC BACKGROUND -------------------
+
 # Function to load audio file and convert it to base64
 def load_audio_base64(file_path):
     try:
@@ -35,11 +36,11 @@ def load_audio_base64(file_path):
         st.error(f"Error: The file {file_path} was not found. Please ensure the file is in the correct location.")
         return None
 
-# Load the audio file
-encoded_music = load_audio_base64("magical.mp4")  # Ensure the file is in the correct folder
+# Load the audio file (ensure the file exists in the correct path)
+encoded_music = load_audio_base64("magical.mp4")  # Adjust path if necessary
 
 if encoded_music:
-    # Embed the audio using HTML (base64)
+    # Embed the audio element in HTML
     audio_html = f"""
     <audio id="background-audio" autoplay loop>
         <source src="data:audio/mp3;base64,{encoded_music}" type="audio/mp3">
@@ -47,14 +48,15 @@ if encoded_music:
     """
     st.markdown(audio_html, unsafe_allow_html=True)
 
-    # Option to toggle sound on/off
+    # Add checkbox to control the audio
     sound_on = st.checkbox("🎶 Turn sound on/off", value=True)
-    
-    # JavaScript to control sound based on checkbox
+
+    # JavaScript to control audio muting based on checkbox
     if sound_on:
         st.markdown('<script>document.getElementById("background-audio").muted = false;</script>', unsafe_allow_html=True)
     else:
         st.markdown('<script>document.getElementById("background-audio").muted = true;</script>', unsafe_allow_html=True)
+
 # ------------------ HEADER AND CONTENT -------------------
 from PIL import Image
 from caregiver_chatbot import CaregiverChatbot
