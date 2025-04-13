@@ -96,5 +96,3 @@ class CaregiverChatbot:
             else:
                 return "🛠️ What would you like to work on next? You’ve got this — and I’ve got your back."
 
-
-
