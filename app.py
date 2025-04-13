@@ -399,3 +399,4 @@ st.write("### Emotional Support Resources")
 st.write("Here are some helpful resources for caregivers of children with medical complexity:")
 for resource in resources:
     st.markdown(f"- [{resource['title']}]({resource['link']}) ({resource['type']})")
+
