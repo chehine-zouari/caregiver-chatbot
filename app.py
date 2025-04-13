@@ -4,14 +4,6 @@ import streamlit as st
 # This must be the very first Streamlit command
 st.set_page_config(page_title="Caregiver AI Support", page_icon="🤖")
 
-from PIL import Image
-from caregiver_chatbot import CaregiverChatbot
-import pandas as pd
-from datetime import datetime
-import base64
-from langdetect import detect
-import torch  # Import torch to check if GPU is available
-
 # ------------------ MAGIC BACKGROUND -------------------
 def inject_custom_background():
     st.markdown("""
@@ -58,7 +50,15 @@ def inject_custom_background():
 
 inject_custom_background()
 
-# ------------------ PAGE HEADER -------------------
+# ------------------ HEADER AND CONTENT -------------------
+from PIL import Image
+from caregiver_chatbot import CaregiverChatbot
+import pandas as pd
+from datetime import datetime
+import base64
+from langdetect import detect
+import torch  # Import torch to check if GPU is available
+
 try:
     logo = Image.open("Logo.jpg")
 except FileNotFoundError:
