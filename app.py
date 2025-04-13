@@ -7,6 +7,11 @@ from datetime import datetime
 import base64
 from langdetect import detect
 
+def initialize_chatbot():
+    from caregiver_chatbot import CaregiverChatbot
+    chatbot = CaregiverChatbot(language='en')
+    return chatbot
+
 # Set page configuration (Title and Icon)
 st.set_page_config(page_title="Caregiver AI Support", page_icon="🤖")
 
