@@ -1,5 +1,6 @@
 import streamlit as st
 import base64
+import os
 
 # ------------------ PAGE CONFIG -------------------
 # This must be the very first Streamlit command
@@ -24,43 +25,48 @@ inject_custom_background()
 
 # ------------------ MUSIC BACKGROUND -------------------
 
-# Function to load and encode the MP4
+# Function to encode the mp3 file
 def load_audio_base64(file_path):
     with open(file_path, "rb") as f:
         audio_data = f.read()
     return base64.b64encode(audio_data).decode()
 
-# Load audio file
-encoded_music = load_audio_base64("magical.mp4")  # make sure this file exists
+# Load the audio (make sure file exists)
+mp3_file = "magical.mp4"
+if os.path.exists(mp3_file):
+    encoded_audio = load_audio_base64(mp3_file)
 
-# Inject HTML audio tag with JS controller
-audio_html = f"""
-<audio id="bg-music" loop>
-    <source src="data:audio/mp3;base64,{encoded_music}" type="audio/mp3">
-</audio>
+    # Inject audio tag
+    st.markdown(
+        f"""
+        <audio id="myAudio" loop>
+            <source src="data:audio/mp3;base64,{encoded_audio}" type="audio/mp3">
+        </audio>
+        <script>
+        const audio = document.getElementById("myAudio");
 
-<script>
-const audio = document.getElementById("bg-music");
+        function playAudio() {{
+            audio.play();
+        }}
 
-function playAudio() {{
-    audio.play();
-}}
+        function pauseAudio() {{
+            audio.pause();
+        }}
+        </script>
+        """,
+        unsafe_allow_html=True
+    )
 
-function pauseAudio() {{
-    audio.pause();
-}}
-</script>
-"""
-st.markdown(audio_html, unsafe_allow_html=True)
-
-# UI Buttons to control the music
-col1, col2 = st.columns(2)
-with col1:
-    if st.button("🔊 Turn ON Music"):
-        st.markdown('<script>playAudio();</script>', unsafe_allow_html=True)
-with col2:
-    if st.button("🔇 Turn OFF Music"):
-        st.markdown('<script>pauseAudio();</script>', unsafe_allow_html=True)
+    # Create buttons
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("🔊 Turn ON Music"):
+            st.markdown("<script>playAudio();</script>", unsafe_allow_html=True)
+    with col2:
+        if st.button("🔇 Turn OFF Music"):
+            st.markdown("<script>pauseAudio();</script>", unsafe_allow_html=True)
+else:
+    st.error("⚠️ Music file not found. Please upload 'magic_theme.mp3' to the same directory.")
 
 # ------------------ HEADER AND CONTENT -------------------
 from PIL import Image
