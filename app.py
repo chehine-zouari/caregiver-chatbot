@@ -1,4 +1,5 @@
 import streamlit as st
+import base64
 
 # ------------------ PAGE CONFIG -------------------
 # This must be the very first Streamlit command
@@ -20,6 +21,21 @@ def inject_custom_background():
 """, unsafe_allow_html=True)
 
 inject_custom_background()
+
+# ------------------ MUSIC BACKGROUND -------------------
+def autoplay_audio(file_path: str):
+    with open(file_path, "rb") as f:
+        audio_bytes = f.read()
+        encoded = base64.b64encode(audio_bytes).decode()
+        audio_html = f"""
+            <audio autoplay loop>
+                <source src="data:audio/mp3;base64,{encoded}" type="audio/mp3">
+            </audio>
+        """
+        st.markdown(audio_html, unsafe_allow_html=True)
+
+# Autoplay background music
+autoplay_audio("magical.mp4")
 
 # ------------------ HEADER AND CONTENT -------------------
 from PIL import Image
