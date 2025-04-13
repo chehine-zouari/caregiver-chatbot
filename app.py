@@ -1,4 +1,9 @@
 import streamlit as st
+
+# ------------------ PAGE CONFIG -------------------
+# This must be the very first Streamlit command
+st.set_page_config(page_title="Caregiver AI Support", page_icon="🤖")
+
 from PIL import Image
 from caregiver_chatbot import CaregiverChatbot
 import pandas as pd
@@ -53,9 +58,7 @@ def inject_custom_background():
 
 inject_custom_background()
 
-# ------------------ PAGE CONFIG -------------------
-st.set_page_config(page_title="Caregiver AI Support", page_icon="🤖")
-
+# ------------------ PAGE HEADER -------------------
 try:
     logo = Image.open("Logo.jpg")
 except FileNotFoundError:
