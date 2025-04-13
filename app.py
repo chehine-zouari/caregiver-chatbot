@@ -362,22 +362,18 @@ else:
 
 
 
-
-
-
-
-
-# Resources list
+# Real resources list (videos + articles)
 resources = [
-    {"title": "How to Manage Caregiver Stress", "link": "https://www.caregiver.org/manage-caregiver-stress", "type": "Article"},
-    {"title": "Caring for Someone with Alzheimer's", "link": "https://www.alz.org/help-support/caregiving", "type": "Article"},
-    {"title": "Self-Care for Family Caregivers", "link": "https://www.nia.nih.gov/health/self-care-family-caregivers", "type": "Article"},
-    {"title": "Stress Relief Tips for Caregivers", "link": "https://www.caregiver.org/caregiver-stress-relief", "type": "Article"},
-    {"title": "Mindfulness for Caregivers", "link": "https://www.psychologytoday.com/us/blog/saving-normal/202003/mindfulness-caregivers", "type": "Article"},
-    {"title": "Caring for a Person with Dementia", "link": "https://www.caregiver.org/caring-for-someone-with-dementia", "type": "Article"},
-    {"title": "Exercise Tips for Caregivers", "link": "https://www.caregiver.org/exercise-tips-for-caregivers", "type": "Article"},
-    {"title": "Caregiver Support Groups", "link": "https://www.alz.org/get-support/online-support-groups", "type": "Article"},
-    {"title": "Mental Health for Caregivers", "link": "https://www.caregiver.org/mental-health-for-caregivers", "type": "Article"}
+    {"title": "How to Manage Caregiver Stress (Video)", "link": "https://www.youtube.com/watch?v=7P5r5JznzTY", "type": "Video"},
+    {"title": "Caring for Someone with Alzheimer's (Article)", "link": "https://www.alz.org/help-support/caregiving", "type": "Article"},
+    {"title": "Self-Care for Family Caregivers (Video)", "link": "https://www.youtube.com/watch?v=4PBnbvH6Oos", "type": "Video"},
+    {"title": "Stress Relief Tips for Caregivers (Article)", "link": "https://www.caregiver.org/caregiver-stress-relief", "type": "Article"},
+    {"title": "Mindfulness for Caregivers (Video)", "link": "https://www.youtube.com/watch?v=U1yFj7gVY5Y", "type": "Video"},
+    {"title": "Caring for a Person with Dementia (Article)", "link": "https://www.caregiver.org/caring-for-someone-with-dementia", "type": "Article"},
+    {"title": "Exercise Tips for Caregivers (Video)", "link": "https://www.youtube.com/watch?v=5J5vayhZfCA", "type": "Video"},
+    {"title": "Caregiver Support Groups (Article)", "link": "https://www.alz.org/get-support/online-support-groups", "type": "Article"},
+    {"title": "Mental Health for Caregivers (Article)", "link": "https://www.caregiver.org/mental-health-for-caregivers", "type": "Article"},
+    {"title": "Caregiving During COVID-19 (Video)", "link": "https://www.youtube.com/watch?v=1YmJ7QokF0E", "type": "Video"}
 ]
 
 # Display the title and introduction
@@ -395,53 +391,6 @@ filtered_resources = [resource for resource in resources if search_query.lower()
 st.sidebar.write("### Resources")
 for resource in filtered_resources:
     st.sidebar.markdown(f"- [{resource['title']}]({resource['link']}) ({resource['type']})")
-
-# Add a simple progress tracker
-st.write("### Track Your Progress")
-progress = st.slider("How are you doing today?", min_value=0, max_value=100, value=50)
-st.progress(progress)
-
-# Implement simple emotional support game: Word Search
-st.write("### Emotional Support Game: Word Search")
-import random
-
-# Create a list of caregiving-related words for the word search
-word_list = ["caregiver", "stress", "relax", "mindfulness", "support", "wellness", "health", "exercise"]
-
-# Shuffle the word list and pick a random selection of words
-random.shuffle(word_list)
-selected_words = word_list[:5]
-
-st.write(f"Words to find: {', '.join(selected_words)}")
-
-# Simple word search puzzle generator
-def create_word_search(words):
-    grid_size = 10
-    grid = [[" " for _ in range(grid_size)] for _ in range(grid_size)]
-
-    for word in words:
-        direction = random.choice(["horizontal", "vertical"])
-        row = random.randint(0, grid_size - 1)
-        col = random.randint(0, grid_size - 1)
-
-        if direction == "horizontal":
-            if col + len(word) <= grid_size:
-                for i in range(len(word)):
-                    grid[row][col + i] = word[i]
-        else:
-            if row + len(word) <= grid_size:
-                for i in range(len(word)):
-                    grid[row + i][col] = word[i]
-    
-    return grid
-
-# Generate the grid
-grid = create_word_search(selected_words)
-
-# Display the word search grid
-st.write("Here's your word search puzzle:")
-for row in grid:
-    st.write(" ".join(row))
 
 # Emotional Support Resources Section
 st.write("### Emotional Support Resources")
