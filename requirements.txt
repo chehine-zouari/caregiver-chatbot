@@ -3,3 +3,6 @@ textblob
 Pillow
 matplotlib
 deep-translator
+transformers
+torch
+flask
