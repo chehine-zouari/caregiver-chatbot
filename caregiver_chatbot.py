@@ -1,5 +1,4 @@
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 
 class CaregiverChatbot:
     def __init__(self, language="en", device=-1, tone="soft"):
@@ -16,15 +15,30 @@ class CaregiverChatbot:
         except Exception as e:
             print(f"Error initializing the chatbot: {e}")
 
-    def set_language(self, language):
-        self.language = language
-        # Implement any language-specific handling here, if necessary.
+        # Initialize sentiment analysis pipeline from HuggingFace
+        self.sentiment_analyzer = pipeline("sentiment-analysis")
 
-    def set_tone(self, tone):
-        self.tone = tone
-        # Implement tone-specific handling if necessary (soft or directive).
-        
+    def analyze_sentiment(self, message):
+        """
+        Analyze sentiment of the input message (positive/negative)
+        :param message: Input message text
+        :return: sentiment label ('POSITIVE' or 'NEGATIVE') and score (confidence)
+        """
+        try:
+            sentiment_result = self.sentiment_analyzer(message)
+            sentiment = sentiment_result[0]['label']  # 'LABEL_0' for negative, 'LABEL_1' for positive
+            score = sentiment_result[0]['score']
+            return sentiment, score
+        except Exception as e:
+            print(f"Error in sentiment analysis: {e}")
+            return "NEUTRAL", 0.0  # In case of error, return neutral sentiment
+
     def process_message(self, message):
+        """
+        Process the incoming message based on the selected tone (soft or directive)
+        :param message: Input message text
+        :return: Response based on the tone
+        """
         message = message.lower()
 
         if self.tone == "soft":
@@ -40,8 +54,6 @@ class CaregiverChatbot:
                 return "😤 Ugh, I get that. It’s completely okay to feel frustrated. Want to vent a bit? I’m here to listen."
             elif "sad" in message or "cry" in message:
                 return "😭 I’m so sorry you’re feeling this way. It’s okay to cry—it means you care deeply. Sending you a big virtual hug 🤗"
-            elif "anxious" in message:
-                return "😟 I see you're feeling anxious. It's okay to feel this way, and I’m here to help. Let's breathe and take it one step at a time."
             elif "thank" in message:
                 return "😊 Aww, you're very welcome! I'm really glad I could help 💖"
             elif "help" in message:
@@ -64,8 +76,6 @@ class CaregiverChatbot:
                 return "⚠️ Anger is a signal. Let’s channel that into action — maybe write down what triggered it and how to prevent it."
             elif "sad" in message or "cry" in message:
                 return "📘 When sadness hits, journaling or a short walk can help. Want me to suggest a reflection prompt?"
-            elif "anxious" in message:
-                return "⚡ Feeling anxious? Try focusing on a small task first, something you can control. One step at a time."
             elif "thank" in message:
                 return "✅ I’m always ready to assist. Let’s keep going strong!"
             elif "help" in message:
@@ -74,3 +84,16 @@ class CaregiverChatbot:
                 return "📋 Here are your scheduled care tasks. Please check the section below."
             else:
                 return "🛠️ What would you like to work on next? You’ve got this — and I’ve got your back."
+
+# Example of how this class might be used
+if __name__ == "__main__":
+    chatbot = CaregiverChatbot(language="en", tone="soft")
+
+    # Example message to process and analyze sentiment
+    message = "I'm feeling anxious"
+    sentiment, score = chatbot.analyze_sentiment(message)
+    print(f"Sentiment: {sentiment}, Score: {score}")
+
+    # Example response based on tone
+    response = chatbot.process_message(message)
+    print(f"Response: {response}")
