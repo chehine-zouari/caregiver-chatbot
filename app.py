@@ -266,7 +266,7 @@ st.title("Caregiver Emotional Support Games")
 # Options for games/activities
 activity = st.selectbox("Choose an activity", ("Journaling", "Breathing Exercise", "Positive Affirmation"))
 
-elif activity == "Journaling":
+if activity == "Journaling":
     st.subheader("Journaling Activity")
     journal_entry = st.text_area("Write your thoughts here...", height=200)
     if journal_entry:
