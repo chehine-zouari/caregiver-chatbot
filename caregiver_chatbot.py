@@ -1,5 +1,3 @@
-from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
-
 class CaregiverChatbot:
     def __init__(self, language="en", device=-1, tone="soft"):
         self.language = language
@@ -17,6 +15,15 @@ class CaregiverChatbot:
 
         # Initialize sentiment analysis pipeline from HuggingFace
         self.sentiment_analyzer = pipeline("sentiment-analysis")
+
+    def set_language(self, language):
+        """
+        Set the language for the chatbot.
+        :param language: A string representing the language code (e.g., 'en' for English, 'fr' for French).
+        """
+        self.language = language
+        print(f"Language set to: {language}")
+        # Additional logic to switch language settings can go here (if required by your model).
 
     def analyze_sentiment(self, message):
         """
@@ -85,16 +92,3 @@ class CaregiverChatbot:
                 return "📋 Here are your scheduled care tasks. Please check the section below."
             else:
                 return "🛠️ What would you like to work on next? You’ve got this — and I’ve got your back."
-
-# Example of how this class might be used
-if __name__ == "__main__":
-    chatbot = CaregiverChatbot(language="en", tone="soft")
-
-    # Example message to process and analyze sentiment
-    message = "I'm feeling anxious"
-    sentiment = chatbot.analyze_sentiment(message)
-    print(f"Sentiment: {sentiment['label']}, Score: {sentiment['score']}")
-
-    # Example response based on tone
-    response = chatbot.process_message(message)
-    print(f"Response: {response}")
