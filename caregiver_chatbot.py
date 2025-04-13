@@ -1,22 +1,24 @@
-from textblob import TextBlob
+from transformers import pipeline
 
 class CaregiverChatbot:
     def __init__(self, tone="soft"):
         self.tone = tone  # Can be 'soft' or 'directive'
+        self.sentiment_analyzer = pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment")
 
     def set_tone(self, tone):
         if tone in ["soft", "directive"]:
             self.tone = tone
 
     def analyze_sentiment(self, message):
-        """Analyze the sentiment of the given message."""
-        blob = TextBlob(message)
-        sentiment_score = blob.sentiment.polarity
-        return {"score": sentiment_score}
+        """Analyze the sentiment using BERT."""
+        result = self.sentiment_analyzer(message)[0]
+        label = result['label']  # e.g., '4 stars'
+        score = int(label[0])  # Convert to int (1 to 5)
+        normalized_score = (score - 3) / 2  # Normalize to -1 (bad) to +1 (good)
+        return {"score": normalized_score, "label": label}
 
     def detect_keywords(self, message, keywords):
-        """Check if any keyword is in the message."""
-        return any(keyword in message for keyword in keywords)
+        return any(keyword in message.lower() for keyword in keywords)
 
     def process_message(self, message):
         message = message.lower()
