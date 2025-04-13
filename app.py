@@ -27,13 +27,20 @@ with col2:
     st.markdown("**Empowering caregivers of children with medical complexity through AI.**")
 
 # Language selection menu
-language_choice = st.selectbox(
+language_choice = st.sidebar.selectbox(
     "Choose your language:",
     ["English", "Mandarin Chinese", "Hindi", "Spanish", "French", "Standard Arabic", "Bengali", "Portuguese", "Russian", "Urdu"]
 )
 
-# Initialize the chatbot with the selected language
+# Tone selection menu
+tone_choice = st.sidebar.selectbox(
+    "Choose tone:",
+    ["soft", "directive"]
+)
+
+# Initialize the chatbot with the selected language and tone
 chatbot = CaregiverChatbot(language=language_choice.lower())
+chatbot.set_tone(tone_choice)
 
 # Initialize chat history if not already present
 if "chat_history" not in st.session_state:
