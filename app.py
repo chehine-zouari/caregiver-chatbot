@@ -379,17 +379,20 @@ resources = [
 st.title("Caregiver AI Support")
 st.write("Welcome to the Caregiver Support Chatbot. Explore resources to help you manage caregiving tasks and improve your well-being.")
 
-# Search function for resources
+# Sidebar Search functionality
 st.sidebar.title("Search Resources")
 search_query = st.sidebar.text_input("Search for a topic...", "")
 
 # Filter resources based on the search query
 filtered_resources = [resource for resource in resources if search_query.lower() in resource["title"].lower()]
 
-# Display the filtered resources
+# Display the filtered resources in the sidebar
 st.sidebar.write("### Resources")
-for resource in filtered_resources:
-    st.sidebar.markdown(f"- [{resource['title']}]({resource['link']}) ({resource['type']})")
+if filtered_resources:
+    for resource in filtered_resources:
+        st.sidebar.markdown(f"- [{resource['title']}]({resource['link']}) ({resource['type']})")
+else:
+    st.sidebar.write("No resources found for your search.")
 
 # Emotional Support Resources Section
 st.write("### Emotional Support Resources")
