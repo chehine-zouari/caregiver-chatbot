@@ -8,8 +8,9 @@ class CaregiverChatbot:
         self.tone = tone
 
         # Force CPU usage to avoid NotImplementedError on unsupported hardware
-        self.sentiment_analyzer = pipeline("sentiment-analysis", device=-1)
-
+        self.sentiment_analyzer = pipeline( "sentiment-analysis",
+        model="distilbert-base-uncased-finetuned-sst-2-english",
+        device=-1)
 
         # Initialize the model and tokenizer
         try:
