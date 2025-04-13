@@ -313,30 +313,49 @@ tasks = {
 def complete_task(task):
     st.session_state.points += tasks[task]
     st.session_state.badges.append(task)
-    st.success(f"Task '{task}' completed! You've earned {tasks[task]} points.")
+    st.success(f"🎉 Task '{task}' completed! You've earned {tasks[task]} points. Keep it up!")
+
+# Function to display badges with more style
+def display_badges():
+    if len(st.session_state.badges) > 0:
+        st.subheader("🎖 Badges Earned:")
+        for badge in st.session_state.badges:
+            st.markdown(f"**🏅 {badge}** - Well done!")
+    else:
+        st.write("No badges earned yet. Start completing tasks and collect your rewards!")
 
 # Display tasks
 st.title("Caregiver Progress Tracker")
 st.subheader("Track your caregiving activities and earn rewards!")
 
-# Complete tasks by clicking the button
+# Button interactions for tasks
 for task, points in tasks.items():
-    if st.button(f"Complete '{task}'"):
+    if st.button(f"✅ Complete '{task}'"):
         complete_task(task)
 
 # Display total points
-st.subheader(f"Total Points: {st.session_state.points}")
+st.subheader(f"💎 Total Points: {st.session_state.points}")
 
-# Display badges earned
-if len(st.session_state.badges) > 0:
-    st.subheader("Badges Earned:")
-    for badge in st.session_state.badges:
-        st.write(f"🏅 {badge}")
+# Show progress bar with percentage
+total_points = sum(tasks.values())
+progress = (st.session_state.points / total_points) * 100
+progress = min(max(progress, 0), 100)  # Ensure progress stays within 0-100%
+
+# Animated progress bar
+progress_bar = st.progress(0)
+for i in range(int(progress) + 1):
+    time.sleep(0.05)  # Adds a small delay for the animation effect
+    progress_bar.progress(i)
+
+# Show progress percentage
+st.markdown(f"### Progress: {int(progress)}%")
+
+# Display badges and tasks completed
+display_badges()
+
+# Add motivational message
+if progress == 100:
+    st.balloons()
+    st.markdown("✨ Congratulations! You've completed all tasks and earned all possible points! ✨")
 else:
-    st.write("No badges earned yet. Start completing tasks!")
-
-# Optional: Add a progress bar for a more visual representation
-# Ensure the progress is between 0 and 100
-progress = (st.session_state.points / sum(tasks.values())) * 100
-progress = min(max(progress, 0), 100)  # Make sure progress is between 0 and 100
-st.progress(progress)
+    st.markdown("🎯 Keep going, you're doing great! More tasks, more rewards!")
