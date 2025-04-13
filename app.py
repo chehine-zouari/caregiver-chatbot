@@ -83,20 +83,21 @@ if st.button("📅 Appointment reminder"):
     st.session_state.chat_history.append(("Bot", response, datetime.now()))
 
 # Helper: convert sentiment scores to DataFrame
-def get_mood_df(history):
-    timestamps = []
+# Inside your get_mood_df function
+def get_mood_df(chat_history):
+    moods = []
     scores = []
 
-    for entry in history:
-        if entry[0] == 'You' and len(entry) >= 3:
-            timestamps.append(entry[2])
-            sentiment_result = chatbot.analyze_sentiment(entry[1])
-            scores.append(sentiment_result['score'] if sentiment_result else 0)
+    # Iterate through the chat history
+    for entry in chat_history:
+        sentiment_result = chatbot.analyze_sentiment(entry[1])  # Assuming entry[1] is the message text
 
-    if not timestamps or not scores:
-        return pd.DataFrame({'Time': [], 'Mood Score': []})
+        moods.append(sentiment_result['label'])  # Add the sentiment label
+        scores.append(sentiment_result['score'])  # Add the sentiment score
 
-    return pd.DataFrame({'Time': timestamps, 'Mood Score': scores})
+    # Create the DataFrame
+    df = pd.DataFrame({"Mood": moods, "Score": scores})
+    return df
 
 # Mood Evolution Dashboard
 if st.sidebar.checkbox("📈 Show Mood Evolution Dashboard"):
@@ -107,6 +108,7 @@ if st.sidebar.checkbox("📈 Show Mood Evolution Dashboard"):
         st.caption("This chart shows how the caregiver's emotional tone has changed over time based on their messages.")
     else:
         st.write("No conversation history to show mood evolution.")
+
 
 # Care Tasks Tracker in Sidebar
 st.sidebar.markdown("## 📋 Care Tasks Tracker")
