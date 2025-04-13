@@ -2,10 +2,14 @@ from transformers import pipeline
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 class CaregiverChatbot:
-    def __init__(self, language="en", device=-1, tone="soft"):
+    def __init__(self, language="english", device="cpu", tone="neutral"):
         self.language = language
         self.device = device
         self.tone = tone
+
+        # Force CPU usage to avoid NotImplementedError on unsupported hardware
+        self.sentiment_analyzer = pipeline("sentiment-analysis", device=-1)
+
 
         # Initialize the model and tokenizer
         try:
